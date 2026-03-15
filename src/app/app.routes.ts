@@ -14,11 +14,8 @@ export const routes: Routes = [
   {
     path: 'suppliers',
     canActivate: [authGuard],
-    // TODO: Placeholder for now, will be replaced with a real shell component
-    loadComponent: () =>
-      import('./features/suppliers/suppliers-shell.component').then(
-        (m) => m.SuppliersShellComponent,
-      ),
+    loadChildren: () =>
+      import('./features/suppliers/suppliers.routes').then((m) => m.SUPPLIERS_ROUTES),
   },
   {
     path: '**',
