@@ -162,7 +162,7 @@ export class SuppliersListComponent {
         label: 'Edit',
         icon: 'pi pi-pencil',
         command: () => {
-          // TODO: Navigate to supplier edit page when implemented
+          if (s) this.openEditDialog(s);
         },
       },
       { separator: true },
@@ -200,6 +200,21 @@ export class SuppliersListComponent {
   protected onSupplierCreated(): void {
     this.createDialogVisible.set(false);
     this.currentPage.set(0);
+    this.load();
+  }
+
+  // Edit dialog
+  protected readonly editDialogVisible = signal(false);
+  protected readonly editingSupplier = signal<SupplierResponse | null>(null);
+
+  protected openEditDialog(supplier: SupplierResponse): void {
+    this.editingSupplier.set(supplier);
+    this.editDialogVisible.set(true);
+  }
+
+  protected onSupplierUpdated(): void {
+    this.editDialogVisible.set(false);
+    this.editingSupplier.set(null);
     this.load();
   }
 

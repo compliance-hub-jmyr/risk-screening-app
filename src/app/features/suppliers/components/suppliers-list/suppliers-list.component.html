@@ -243,8 +243,8 @@
           <td class="text-sm text-surface-500 whitespace-nowrap">
             <span class="block">{{ supplier.updatedAt | date: 'MMM d, y' }}</span>
             <span class="block text-xs text-surface-400">{{
-                supplier.updatedAt | date: 'h:mm a'
-              }}</span>
+              supplier.updatedAt | date: 'h:mm a'
+            }}</span>
           </td>
 
           <!-- Actions -->
@@ -326,3 +326,24 @@
     (cancelled)="createDialogVisible.set(false)"
   />
 </p-dialog>
+
+<!-- Edit supplier dialog -->
+@if (editingSupplier()) {
+  <p-dialog
+    [(visible)]="editDialogVisible"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '42rem', maxWidth: '95vw' }"
+    header="Edit supplier"
+    styleClass="overflow-visible"
+    (onHide)="editDialogVisible.set(false); editingSupplier.set(null)"
+  >
+    <app-supplier-form
+      mode="edit"
+      [initialValue]="editingSupplier()"
+      (saved)="onSupplierUpdated()"
+      (cancelled)="editDialogVisible.set(false); editingSupplier.set(null)"
+    />
+  </p-dialog>
+}
