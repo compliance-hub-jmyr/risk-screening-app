@@ -3,7 +3,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_ENDPOINTS } from '@/app/core/config';
 import { PageResponse } from '@/app/shared/models/api';
-import { CreateSupplierRequest, SupplierPageRequest, SupplierResponse } from '../models';
+import {
+  CreateSupplierRequest,
+  SupplierPageRequest,
+  SupplierResponse,
+  UpdateSupplierRequest,
+} from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class SupplierService {
@@ -28,6 +33,10 @@ export class SupplierService {
 
   create(request: CreateSupplierRequest): Observable<SupplierResponse> {
     return this.http.post<SupplierResponse>(API_ENDPOINTS.SUPPLIERS, request);
+  }
+
+  update(id: string, request: UpdateSupplierRequest): Observable<SupplierResponse> {
+    return this.http.put<SupplierResponse>(API_ENDPOINTS.SUPPLIER_BY_ID(id), request);
   }
 
   getById(id: string): Observable<SupplierResponse> {
