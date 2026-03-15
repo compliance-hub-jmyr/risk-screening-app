@@ -1,12 +1,12 @@
 <div class="flex h-screen flex-col overflow-hidden bg-surface-50">
   <app-header />
   <main
-    class="flex-1 overflow-y-auto px-4 py-8 pt-24 sm:px-6 md:pt-24"
+    class="flex flex-1 flex-col overflow-hidden px-4 py-8 pt-24 sm:px-6 md:pt-24"
     id="main-content"
     tabindex="-1"
     aria-label="Main content"
   >
-    <div class="mx-auto max-w-screen-2xl">
+    <div class="mx-auto flex w-full min-h-0 flex-1 flex-col max-w-screen-2xl">
       <router-outlet />
     </div>
   </main>
