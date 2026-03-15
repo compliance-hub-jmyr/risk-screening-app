@@ -1,4 +1,5 @@
 import { HttpInterceptorFn } from '@angular/common/http';
+import { API_VERSION } from '@/app/core';
 
 /**
  * API Version Header Interceptor
@@ -14,7 +15,7 @@ export const apiVersionInterceptor: HttpInterceptorFn = (req, next) => {
 
   const cloned = req.clone({
     setHeaders: {
-      'X-Api-Version': '1.0',
+      'X-Api-Version': API_VERSION,
     },
   });
 
