@@ -15,12 +15,12 @@ export const errorHandlerInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       let message = 'An unexpected error occurred';
-      let errorCode: number | undefined;
+      let errorCode: string | undefined;
 
       if (error.error && typeof error.error === 'object') {
         const apiError = error.error as ErrorResponse;
         message = apiError.message || apiError.title || message;
-        errorCode = apiError.errorNumber;
+        errorCode = apiError.errorCode;
 
         if (errorCode === ERROR_CODES.AUTHENTICATION_FAILED) {
           message = 'Your session has expired. Please log in again.';

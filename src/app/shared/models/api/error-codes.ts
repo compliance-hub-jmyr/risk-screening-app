@@ -1,44 +1,71 @@
 /**
- * Backend error codes mapped from ErrorCodes.cs
+ * Backend error codes — mirrors ErrorCodes.cs exactly.
  *
- * Error codes follow a structured numbering scheme:
- * - 1000-1999: Validation & Value Object errors
- * - 2000-2999: Authentication errors
- * - 3000-3999: Authorization errors
- * - 4000-4999: Entity not found errors
- * - 5000-5999: Business rule violations
- * - 6000-6999: Infrastructure errors
+ * Numbering scheme:
+ * - 1000–1999: Validation & Value Object errors → HTTP 400
+ * - 2000–2999: Authentication errors → HTTP 401
+ * - 3000–3999: Authorization errors → HTTP 403
+ * - 4000–4999: Entity not found → HTTP 404
+ * - 5000–5999: Business rule violations → HTTP 409
+ * - 6000–6999: Infrastructure errors → HTTP 500/502
+ * - 9000–9999: Generic/unexpected errors → HTTP 500
  */
 export const ERROR_CODES = {
-  // Validation Errors
-  VALIDATION_FAILED: 1000,
-  INVALID_VALUE: 1001,
+  // ── Validation (1000–1999) ─────────────────────────────────────────────
+  VALIDATION_FAILED: 'VALIDATION_FAILED',
+  CONSTRAINT_VIOLATION: 'CONSTRAINT_VIOLATION',
+  INVALID_ARGUMENT: 'INVALID_ARGUMENT',
+  INVALID_VALUE: 'INVALID_VALUE',
+  INVALID_EMAIL: 'INVALID_EMAIL',
+  INVALID_USERNAME: 'INVALID_USERNAME',
+  INVALID_PASSWORD: 'INVALID_PASSWORD',
+  INVALID_COUNTRY_CODE: 'INVALID_COUNTRY_CODE',
+  INVALID_PHONE_NUMBER: 'INVALID_PHONE_NUMBER',
+  INVALID_WEBSITE_URL: 'INVALID_WEBSITE_URL',
+  INVALID_TAX_ID: 'INVALID_TAX_ID',
+  INVALID_LEGAL_NAME: 'INVALID_LEGAL_NAME',
+  INVALID_COMMERCIAL_NAME: 'INVALID_COMMERCIAL_NAME',
+  INVALID_SUPPLIER_ADDRESS: 'INVALID_SUPPLIER_ADDRESS',
+  INVALID_ANNUAL_BILLING: 'INVALID_ANNUAL_BILLING',
+  INVALID_SUPPLIER_ID: 'INVALID_SUPPLIER_ID',
 
-  // Authentication & Authorization (2000-3999)
-  AUTHENTICATION_FAILED: 2000,
-  INVALID_CREDENTIALS: 2001,
-  ACCOUNT_LOCKED: 2002,
-  AUTHORIZATION_FAILED: 3000,
+  // ── Authentication (2000–2999) ─────────────────────────────────────────
+  AUTHENTICATION_FAILED: 'AUTHENTICATION_FAILED',
+  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
+  ACCOUNT_LOCKED: 'ACCOUNT_LOCKED',
+  ACCOUNT_PENDING_VERIFICATION: 'ACCOUNT_PENDING_VERIFICATION',
+  INVALID_TOKEN: 'INVALID_TOKEN',
+  TOKEN_EXPIRED: 'TOKEN_EXPIRED',
 
-  // Not Found Errors (4000-4999)
-  ENTITY_NOT_FOUND: 4000,
-  USER_NOT_FOUND: 4001,
-  ROLE_NOT_FOUND: 4002,
-  SUPPLIER_NOT_FOUND: 4003,
-  SCREENING_NOT_FOUND: 4004,
+  // ── Authorization (3000–3999) ──────────────────────────────────────────
+  AUTHORIZATION_FAILED: 'AUTHORIZATION_FAILED',
+  PERMISSION_DENIED: 'PERMISSION_DENIED',
 
-  // Business Rule Violations (5000-5999)
-  BUSINESS_RULE_VIOLATION: 5000,
-  EMAIL_ALREADY_EXISTS: 5001,
-  ROLE_ALREADY_EXISTS: 5002,
-  SUPPLIER_TAXID_ALREADY_EXISTS: 5003,
-  SUPPLIER_ALREADY_DELETED: 5004,
-  INVALID_SUPPLIER_STATE: 5005,
+  // ── Not Found (4000–4999) ──────────────────────────────────────────────
+  ENTITY_NOT_FOUND: 'ENTITY_NOT_FOUND',
+  SUPPLIER_NOT_FOUND: 'SUPPLIER_NOT_FOUND',
+  SCREENING_RESULT_NOT_FOUND: 'SCREENING_RESULT_NOT_FOUND',
 
-  // Infrastructure Errors
-  INFRASTRUCTURE_ERROR: 6000,
-  REQUIRED_SEED_DATA_MISSING: 6001,
+  // ── Business Rule Violations (5000–5999) ──────────────────────────────
+  BUSINESS_RULE_VIOLATION: 'BUSINESS_RULE_VIOLATION',
+  DUPLICATE_ENTRY: 'DUPLICATE_ENTRY',
+  INVALID_OPERATION: 'INVALID_OPERATION',
+  SUPPLIER_TAX_ID_ALREADY_EXISTS: 'SUPPLIER_TAX_ID_ALREADY_EXISTS',
+  INVALID_SUPPLIER_STATE: 'INVALID_SUPPLIER_STATE',
+  SUPPLIER_ALREADY_DELETED: 'SUPPLIER_ALREADY_DELETED',
+
+  // ── Infrastructure (6000–6999) ─────────────────────────────────────────
+  INFRASTRUCTURE_ERROR: 'INFRASTRUCTURE_ERROR',
+  DATABASE_ERROR: 'DATABASE_ERROR',
+  DATABASE_INTEGRITY_VIOLATION: 'DATABASE_INTEGRITY_VIOLATION',
+  REQUIRED_SEED_DATA_MISSING: 'REQUIRED_SEED_DATA_MISSING',
+
+  // ── Rate Limiting (7000–7999) ──────────────────────────────────────────
+  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT_EXCEEDED',
+
+  // ── Generic (9000–9999) ────────────────────────────────────────────────
+  INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
-export type ErrorCodeName = keyof typeof ERROR_CODES;
+export type ErrorCodeKey = keyof typeof ERROR_CODES;
