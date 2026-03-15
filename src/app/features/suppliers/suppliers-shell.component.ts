@@ -7,7 +7,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-suppliers-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex h-screen items-center justify-center">
+    <div class="flex h-full items-center justify-center">
       <p class="text-surface-500">Suppliers — coming soon</p>
     </div>
   `,
