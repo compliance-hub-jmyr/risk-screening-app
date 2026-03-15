@@ -1,0 +1,296 @@
+<form (ngSubmit)="submit()" [formGroup]="form" aria-label="Supplier form" novalidate>
+  <div class="flex flex-col gap-5">
+    <!-- Server error -->
+    @if (serverError()) {
+      <p-message severity="error" styleClass="w-full">{{ serverError() }}</p-message>
+    }
+
+    <!-- Required fields -->
+    <fieldset class="contents">
+      <legend class="sr-only">Required information</legend>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <!-- Legal name -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700" for="sf-legal-name">
+            Legal name <span aria-hidden="true" class="text-red-500">*</span>
+          </label>
+          <input
+            [attr.aria-describedby]="
+              isInvalid('legalName') ? 'sf-legal-name-err' : 'sf-legal-name-hint'
+            "
+            [class]="isInvalid('legalName') ? 'ng-invalid ng-dirty w-full' : 'w-full'"
+            [maxlength]="LEGAL_NAME_MAX"
+            aria-required="true"
+            autocomplete="organization"
+            formControlName="legalName"
+            id="sf-legal-name"
+            pInputText
+            placeholder="Official registered name"
+            type="text"
+          />
+          @if (isInvalid('legalName')) {
+            <small class="text-red-500" id="sf-legal-name-err" role="alert">{{
+                errorFor('legalName')
+              }}</small>
+          } @else {
+            <small class="text-surface-400" id="sf-legal-name-hint">
+              {{ charCount('legalName') }}/{{ LEGAL_NAME_MAX }} characters
+            </small>
+          }
+        </div>
+
+        <!-- Commercial name -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700" for="sf-commercial-name">
+            Commercial name <span aria-hidden="true" class="text-red-500">*</span>
+          </label>
+          <input
+            [attr.aria-describedby]="
+              isInvalid('commercialName') ? 'sf-commercial-name-err' : 'sf-commercial-name-hint'
+            "
+            [class]="isInvalid('commercialName') ? 'ng-invalid ng-dirty w-full' : 'w-full'"
+            [maxlength]="COMMERCIAL_NAME_MAX"
+            aria-required="true"
+            autocomplete="off"
+            formControlName="commercialName"
+            id="sf-commercial-name"
+            pInputText
+            placeholder="Trade or brand name"
+            type="text"
+          />
+          @if (isInvalid('commercialName')) {
+            <small class="text-red-500" id="sf-commercial-name-err" role="alert">{{
+                errorFor('commercialName')
+              }}</small>
+          } @else {
+            <small class="text-surface-400" id="sf-commercial-name-hint">
+              {{ charCount('commercialName') }}/{{ COMMERCIAL_NAME_MAX }} characters
+            </small>
+          }
+        </div>
+
+        <!-- Tax ID -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700" for="sf-tax-id">
+            Tax ID <span aria-hidden="true" class="text-red-500">*</span>
+          </label>
+          <input
+            [attr.aria-describedby]="isInvalid('taxId') ? 'sf-tax-id-err' : 'sf-tax-id-hint'"
+            [class]="isInvalid('taxId') ? 'ng-invalid ng-dirty w-full' : 'w-full'"
+            aria-required="true"
+            autocomplete="off"
+            formControlName="taxId"
+            id="sf-tax-id"
+            inputmode="numeric"
+            maxlength="11"
+            pInputText
+            placeholder="e.g. 20123456789"
+            type="text"
+          />
+          @if (isInvalid('taxId')) {
+            <small class="text-red-500" id="sf-tax-id-err" role="alert">{{
+                errorFor('taxId')
+              }}</small>
+          } @else {
+            <small class="text-surface-400" id="sf-tax-id-hint"
+            >Exactly 11 numeric digits (e.g. RUC: 20123456789)</small
+            >
+          }
+        </div>
+
+        <!-- Country -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700" for="sf-country">
+            Country <span aria-hidden="true" class="text-red-500">*</span>
+          </label>
+          <p-select
+            [attr.aria-describedby]="isInvalid('country') ? 'sf-country-err' : null"
+            [class]="isInvalid('country') ? 'ng-invalid ng-dirty w-full' : 'w-full'"
+            [filter]="true"
+            [options]="countryOptions"
+            appendTo="body"
+            aria-required="true"
+            filterPlaceholder="Search country…"
+            formControlName="country"
+            inputId="sf-country"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select a country"
+          />
+          @if (isInvalid('country')) {
+            <small class="text-red-500" id="sf-country-err" role="alert">{{
+                errorFor('country')
+              }}</small>
+          }
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Optional fields -->
+    <fieldset class="contents">
+      <legend class="mb-1 text-xs font-semibold uppercase tracking-wide text-surface-400">
+        Optional details
+      </legend>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <!-- Contact email -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700" for="sf-email">Contact email</label>
+          <input
+            [attr.aria-describedby]="isInvalid('contactEmail') ? 'sf-email-err' : null"
+            [class]="isInvalid('contactEmail') ? 'ng-invalid ng-dirty w-full' : 'w-full'"
+            autocomplete="email"
+            formControlName="contactEmail"
+            id="sf-email"
+            pInputText
+            placeholder="contact@example.com"
+            type="email"
+          />
+          @if (isInvalid('contactEmail')) {
+            <small class="text-red-500" id="sf-email-err" role="alert">{{
+                errorFor('contactEmail')
+              }}</small>
+          }
+        </div>
+
+        <!-- Contact phone -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700" for="sf-phone">Contact phone</label>
+          <input
+            [attr.aria-describedby]="isInvalid('contactPhone') ? 'sf-phone-err' : 'sf-phone-hint'"
+            [class]="isInvalid('contactPhone') ? 'ng-invalid ng-dirty w-full' : 'w-full'"
+            autocomplete="tel"
+            formControlName="contactPhone"
+            id="sf-phone"
+            pInputText
+            placeholder="+1 555 000 0000"
+            type="tel"
+          />
+          @if (isInvalid('contactPhone')) {
+            <small class="text-red-500" id="sf-phone-err" role="alert">{{
+                errorFor('contactPhone')
+              }}</small>
+          } @else {
+            <small class="text-surface-400" id="sf-phone-hint">
+              Optional leading +, digits, spaces, dashes or parentheses. 7–20 characters.
+            </small>
+          }
+        </div>
+
+        <!-- Website -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700" for="sf-website">Website</label>
+          <input
+            [attr.aria-describedby]="isInvalid('website') ? 'sf-website-err' : 'sf-website-hint'"
+            [class]="isInvalid('website') ? 'ng-invalid ng-dirty w-full' : 'w-full'"
+            autocomplete="url"
+            formControlName="website"
+            id="sf-website"
+            pInputText
+            placeholder="https://example.com"
+            type="url"
+          />
+          @if (isInvalid('website')) {
+            <small class="text-red-500" id="sf-website-err" role="alert">{{
+                errorFor('website')
+              }}</small>
+          } @else {
+            <small class="text-surface-400" id="sf-website-hint"
+            >Must start with http:// or https://</small
+            >
+          }
+        </div>
+
+        <!-- Annual billing -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700" for="sf-billing">
+            Annual billing (USD)
+          </label>
+          <p-inputnumber
+            [ariaDescribedBy]="
+              isInvalid('annualBillingUsd') ? 'sf-billing-err' : 'sf-billing-hint'
+            "
+            [class]="isInvalid('annualBillingUsd') ? 'ng-invalid ng-dirty w-full' : 'w-full'"
+            [inputStyleClass]="
+              isInvalid('annualBillingUsd') ? 'ng-invalid ng-dirty w-full' : 'w-full'
+            "
+            [maxFractionDigits]="2"
+            [minFractionDigits]="0"
+            [min]="0"
+            currency="USD"
+            formControlName="annualBillingUsd"
+            inputId="sf-billing"
+            locale="en-US"
+            mode="currency"
+            placeholder="0.00"
+          ></p-inputnumber>
+          @if (isInvalid('annualBillingUsd')) {
+            <small class="text-red-500" id="sf-billing-err" role="alert">{{
+                errorFor('annualBillingUsd')
+              }}</small>
+          } @else {
+            <small class="text-surface-400" id="sf-billing-hint"
+            >Non-negative, up to 2 decimal places (e.g. $1,250,000.00)</small
+            >
+          }
+        </div>
+
+        <!-- Address -->
+        <div class="flex flex-col gap-1.5 sm:col-span-2">
+          <label class="text-sm font-medium text-surface-700" for="sf-address">Address</label>
+          <input
+            [attr.aria-describedby]="isInvalid('address') ? 'sf-address-err' : 'sf-address-hint'"
+            [class]="isInvalid('address') ? 'ng-invalid ng-dirty w-full' : 'w-full'"
+            [maxlength]="ADDRESS_MAX"
+            autocomplete="street-address"
+            formControlName="address"
+            id="sf-address"
+            pInputText
+            placeholder="Street, city, state / province"
+            type="text"
+          />
+          @if (isInvalid('address')) {
+            <small class="text-red-500" id="sf-address-err" role="alert">{{
+                errorFor('address')
+              }}</small>
+          } @else {
+            <small class="text-surface-400" id="sf-address-hint">
+              {{ charCount('address') }}/{{ ADDRESS_MAX }} characters
+            </small>
+          }
+        </div>
+
+        <!-- Notes -->
+        <div class="flex flex-col gap-1.5 sm:col-span-2">
+          <label class="text-sm font-medium text-surface-700" for="sf-notes">Notes</label>
+          <textarea
+            class="w-full resize-none"
+            formControlName="notes"
+            id="sf-notes"
+            pTextarea
+            placeholder="Additional observations…"
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Actions -->
+    <div class="flex justify-end gap-2 pt-1">
+      <button
+        (click)="cancel()"
+        [disabled]="submitting()"
+        class="p-button-outlined p-button-secondary"
+        pButton
+        type="button"
+      ><span pButtonLabel>Cancel</span></button>
+      <button
+        [disabled]="submitting()"
+        [loading]="submitting()"
+        pButton
+        type="submit"
+      ><span pButtonLabel>{{ submitLabel() }}</span></button>
+    </div>
+  </div>
+</form>
