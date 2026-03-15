@@ -8,9 +8,10 @@ export const SUPPLIERS_ROUTES: Routes = [
     children: [
       {
         path: '',
-        // Will be replaced in feature/us-sup-002-list-suppliers
         loadComponent: () =>
-          import('./suppliers-shell.component').then((m) => m.SuppliersShellComponent),
+          import('./components/suppliers-list/suppliers-list.component').then(
+            (m) => m.SuppliersListComponent,
+          ),
       },
     ],
   },

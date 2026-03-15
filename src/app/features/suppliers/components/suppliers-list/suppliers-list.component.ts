@@ -72,7 +72,7 @@ export class SuppliersListComponent {
 
   // Pagination / sort state
   protected readonly defaultSortField: SupplierSortField = 'updatedAt';
-  protected readonly defaultSortOrder = -1; // -1 = DESC in PrimeNG
+  protected readonly defaultSortOrder = -1; // -1
 
   private currentPage = signal(0);
   private currentSize = signal(this.defaultPageSize);
