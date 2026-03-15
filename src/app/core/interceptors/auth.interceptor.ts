@@ -1,28 +1,25 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthService } from '@/app/core';
+import { TOKEN_PROVIDER } from '../tokens';
 
 /**
  * JWT Token Injection Interceptor
  *
- * Automatically injects the JWT Bearer token from AuthService
- * into all outgoing HTTP requests to authenticated endpoints.
+ * Reads the JWT via TOKEN_PROVIDER — an InjectionToken defined in core.
+ * The concrete implementation (AuthService) is wired in app.config.ts,
+ * so core never imports from features (no circular dependency).
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  const token = authService.getToken();
+  const tokenProvider = inject(TOKEN_PROVIDER);
+  const token = tokenProvider.getToken();
 
-  // Skip token injection for public endpoints
   if (!token || req.url.includes('/authentication/sign-in')) {
     return next(req);
   }
 
-  // Clone request and add Authorization header
-  const cloned = req.clone({
-    setHeaders: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return next(cloned);
+  return next(
+    req.clone({
+      setHeaders: { Authorization: `Bearer ${token}` },
+    }),
+  );
 };
