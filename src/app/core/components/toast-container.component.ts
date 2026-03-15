@@ -1,16 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Toast } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { ToastService } from '@/app/core/services';
+import { ToastService } from '@/app/core';
 
-/**
- * Global Toast Container Component
- *
- * Displays toast notifications from ToastService using PrimeNG Toast.
- * Should be placed once in the root app component.
- */
 @Component({
   selector: 'app-toast-container',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Toast],
   template: '<p-toast />',
   styles: '',
@@ -18,9 +13,8 @@ import { ToastService } from '@/app/core/services';
 })
 export class ToastContainerComponent {
   private readonly toastService = inject(ToastService);
-  protected readonly messageService = inject(MessageService);
 
   constructor() {
-    this.toastService.setMessageService(this.messageService);
+    this.toastService.setMessageService(inject(MessageService));
   }
 }

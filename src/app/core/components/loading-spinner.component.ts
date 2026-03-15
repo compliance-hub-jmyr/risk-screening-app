@@ -1,15 +1,10 @@
-import { Component, inject } from '@angular/core';
-import { LoadingService } from '@/app/core/services';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { LoadingService } from '@/app/core';
 
-/**
- * Global Loading Spinner Component
- *
- * Displays a fullscreen loading overlay when LoadingService.isLoading is true.
- * Optional - can be placed in a root app component for the global loading state.
- */
 @Component({
   selector: 'app-loading-spinner',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ProgressSpinner],
   template: `
     @if (loadingService.isLoading()) {
