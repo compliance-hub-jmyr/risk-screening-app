@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_ENDPOINTS } from '@/app/core/config';
 import { PageResponse } from '@/app/shared/models/api';
-import { SupplierPageRequest, SupplierResponse } from '../models';
+import { CreateSupplierRequest, SupplierPageRequest, SupplierResponse } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class SupplierService {
@@ -24,6 +24,10 @@ export class SupplierService {
     if (request.riskLevel) params = params.set('riskLevel', request.riskLevel);
 
     return this.http.get<PageResponse<SupplierResponse>>(API_ENDPOINTS.SUPPLIERS, { params });
+  }
+
+  create(request: CreateSupplierRequest): Observable<SupplierResponse> {
+    return this.http.post<SupplierResponse>(API_ENDPOINTS.SUPPLIERS, request);
   }
 
   getById(id: string): Observable<SupplierResponse> {
