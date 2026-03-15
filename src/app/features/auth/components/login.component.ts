@@ -71,7 +71,7 @@ export class LoginComponent {
   private handleError(err: HttpErrorResponse): void {
     const apiError = err.error as ErrorResponse | undefined;
 
-    switch (apiError?.errorNumber) {
+    switch (apiError?.errorCode) {
       case ERROR_CODES.INVALID_CREDENTIALS:
         this.errorMessage.set('Invalid email or password. Please try again.');
         break;
