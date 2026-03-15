@@ -26,6 +26,8 @@ export const errorHandlerInterceptor: HttpInterceptorFn = (req, next) => {
           message = 'Your session has expired. Please log in again.';
         } else if (errorCode === ERROR_CODES.AUTHORIZATION_FAILED) {
           message = 'You do not have permission to perform this action.';
+        } else if (errorCode === ERROR_CODES.RATE_LIMIT_EXCEEDED || error.status === 429) {
+          message = 'Too many requests. Please wait a moment and try again.';
         } else if (error.status >= 500) {
           message = 'A server error occurred. Please try again later.';
         }
