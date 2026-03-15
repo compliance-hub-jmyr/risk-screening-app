@@ -20,6 +20,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { Menu, MenuModule } from 'primeng/menu';
+import { DialogModule } from 'primeng/dialog';
 import { MenuItem } from 'primeng/api';
 
 import { SupplierService } from '../../services';
@@ -33,6 +34,7 @@ import {
 } from '../../models';
 import { PageMetadata } from '@/app/shared/models/api';
 import { COUNTRIES, CountryOption } from '@/app/shared/data/countries.data';
+import { SupplierFormComponent } from '../supplier-form/supplier-form.component';
 
 interface SelectOption<T extends string> {
   label: string;
@@ -55,8 +57,11 @@ interface SelectOption<T extends string> {
     IconFieldModule,
     InputIconModule,
     MenuModule,
+    DialogModule,
+    SupplierFormComponent,
   ],
   templateUrl: './suppliers-list.component.html',
+  host: { class: 'flex flex-1 flex-col min-h-0' },
 })
 export class SuppliersListComponent {
   private readonly supplierService = inject(SupplierService);
@@ -72,7 +77,7 @@ export class SuppliersListComponent {
 
   // Pagination / sort state
   protected readonly defaultSortField: SupplierSortField = 'updatedAt';
-  protected readonly defaultSortOrder = -1; // -1
+  protected readonly defaultSortOrder = -1;
 
   private currentPage = signal(0);
   private currentSize = signal(this.defaultPageSize);
@@ -139,8 +144,6 @@ export class SuppliersListComponent {
 
   // Table reference
   protected readonly table = viewChild.required<Table>('table');
-
-  // Row actions menu
   protected readonly actionsMenu = viewChild.required<Menu>('actionsMenu');
   protected readonly activeSupplier = signal<SupplierResponse | null>(null);
 
@@ -185,6 +188,19 @@ export class SuppliersListComponent {
   protected openMenu(event: MouseEvent, supplier: SupplierResponse): void {
     this.activeSupplier.set(supplier);
     this.actionsMenu().toggle(event);
+  }
+
+  // Create dialog
+  protected readonly createDialogVisible = signal(false);
+
+  protected openCreateDialog(): void {
+    this.createDialogVisible.set(true);
+  }
+
+  protected onSupplierCreated(): void {
+    this.createDialogVisible.set(false);
+    this.currentPage.set(0);
+    this.load();
   }
 
   constructor() {
