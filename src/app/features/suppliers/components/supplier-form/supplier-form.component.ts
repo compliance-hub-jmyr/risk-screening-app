@@ -26,7 +26,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { MessageModule } from 'primeng/message';
 
 import { SupplierService } from '../../services';
-import { CreateSupplierRequest, SupplierResponse } from '../../models';
+import { CreateSupplierRequest, SupplierResponse, UpdateSupplierRequest } from '../../models';
 import { COUNTRIES, CountryOption } from '@/app/shared/data/countries.data';
 import { ERROR_CODES, ErrorResponse } from '@/app/shared/models/api';
 import { ToastService } from '@/app/core/services/toast.service';
@@ -136,9 +136,6 @@ export class SupplierFormComponent implements OnInit {
   // State
   protected readonly submitting = signal(false);
   protected readonly serverError = signal<string | null>(null);
-  protected readonly title = computed(() =>
-    this.mode() === 'create' ? 'New supplier' : 'Edit supplier',
-  );
   protected readonly submitLabel = computed(() =>
     this.mode() === 'create' ? 'Create supplier' : 'Save changes',
   );
@@ -217,8 +214,47 @@ export class SupplierFormComponent implements OnInit {
     this.serverError.set(null);
     this.submitting.set(true);
 
+    const payload = this.buildPayload();
+
+    if (this.mode() === 'edit') {
+      const existing = this.initialValue();
+      if (!existing) return;
+
+      this.supplierService.update(existing.id, payload).subscribe({
+        next: (supplier) => {
+          this.submitting.set(false);
+          this.toastService.success(
+            `${supplier.legalName} has been updated successfully.`,
+            'Supplier updated',
+          );
+          this.saved.emit(supplier);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.submitting.set(false);
+          this.handleServerError(err);
+        },
+      });
+    } else {
+      this.supplierService.create(payload).subscribe({
+        next: (supplier) => {
+          this.submitting.set(false);
+          this.toastService.success(
+            `${supplier.legalName} has been added successfully.`,
+            'Supplier created',
+          );
+          this.saved.emit(supplier);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.submitting.set(false);
+          this.handleServerError(err);
+        },
+      });
+    }
+  }
+
+  private buildPayload(): CreateSupplierRequest & UpdateSupplierRequest {
     const raw = this.form.getRawValue();
-    const request: CreateSupplierRequest = {
+    return {
       LegalName: raw.legalName.trim(),
       CommercialName: raw.commercialName.trim(),
       TaxId: raw.taxId.trim(),
@@ -230,21 +266,6 @@ export class SupplierFormComponent implements OnInit {
       AnnualBillingUsd: raw.annualBillingUsd ?? null,
       Notes: raw.notes?.trim() || null,
     };
-
-    this.supplierService.create(request).subscribe({
-      next: (supplier) => {
-        this.submitting.set(false);
-        this.toastService.success(
-          `${supplier.legalName} has been added successfully.`,
-          'Supplier created',
-        );
-        this.saved.emit(supplier);
-      },
-      error: (err: HttpErrorResponse) => {
-        this.submitting.set(false);
-        this.handleServerError(err);
-      },
-    });
   }
 
   protected cancel(): void {
