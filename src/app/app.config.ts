@@ -20,7 +20,10 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([apiVersionInterceptor, authInterceptor, errorHandlerInterceptor]),
     ),
     providePrimeNG({
-      theme: { preset: Aura },
+      theme: {
+        preset: Aura,
+        options: { darkModeSelector: 'none' },
+      },
     }),
     // Wire TOKEN_PROVIDER → AuthService
     { provide: TOKEN_PROVIDER, useExisting: AuthService },
