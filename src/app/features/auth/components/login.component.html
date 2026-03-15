@@ -1,0 +1,198 @@
+<div class="flex min-h-screen">
+  <!-- Left branding panel -->
+  <aside
+    class="relative hidden lg:flex lg:w-[45%] flex-col justify-between overflow-hidden bg-primary-600 px-12 py-10"
+    aria-hidden="true"
+  >
+    <!-- Decorative blobs -->
+    <div
+      class="absolute -top-32 -left-32 h-112 w-md rounded-full bg-primary-500/40 blur-3xl pointer-events-none"
+    ></div>
+    <div
+      class="absolute -bottom-20 -right-20 h-80 w-80 rounded-full bg-primary-800/60 blur-3xl pointer-events-none"
+    ></div>
+    <div
+      class="absolute top-1/2 left-2/3 h-56 w-56 -translate-y-1/2 rounded-full bg-white/5 blur-2xl pointer-events-none"
+    ></div>
+
+    <!-- Logo -->
+    <div class="relative z-10 flex items-center gap-3">
+      <div
+        class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm ring-1 ring-white/25"
+      >
+        <svg
+          class="h-5 w-5 text-white"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+      </div>
+      <span class="text-base font-semibold tracking-tight text-white">Risk Screening</span>
+    </div>
+
+    <!-- Hero content -->
+    <div class="relative z-10 space-y-8">
+      <div class="space-y-4">
+        <div
+          class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-primary-100 ring-1 ring-white/15"
+        >
+          <span class="h-1.5 w-1.5 rounded-full bg-green-400"></span>
+          Compliance-ready platform
+        </div>
+        <h2 class="text-4xl font-bold leading-[1.15] tracking-tight text-white">
+          Supplier risk<br />screening, <br />
+          <span class="text-primary-200">simplified.</span>
+        </h2>
+        <p class="text-sm leading-relaxed text-primary-100/75 max-w-xs">
+          Cross-check your suppliers against OFAC, World Bank and ICIJ watchlists in seconds — not
+          hours.
+        </p>
+      </div>
+
+      <!-- Feature list -->
+      <ul class="flex flex-col gap-3" role="list">
+        @for (feature of brandingFeatures; track feature.label) {
+          <li class="flex items-center gap-3">
+            <span
+              class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10"
+            >
+              <i [class]="feature.icon + ' text-xs text-white'"></i>
+            </span>
+            <span class="text-sm text-primary-100/90">{{ feature.label }}</span>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <!-- Bottom footnote -->
+    <p class="relative z-10 text-xs text-primary-200/50">
+      © {{ currentYear }} Risk Screening Platform. All rights reserved.
+    </p>
+  </aside>
+
+  <!-- Right form panel -->
+  <main class="flex flex-1 flex-col items-center justify-center bg-surface-0 px-6 py-12 sm:px-12">
+    <!-- Mobile-only logo -->
+    <div class="mb-10 flex flex-col items-center lg:hidden">
+      <div
+        class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-500 shadow-lg"
+      >
+        <svg
+          class="h-6 w-6 text-white"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+      </div>
+      <span class="text-xl font-bold text-surface-900">Risk Screening</span>
+    </div>
+
+    <!-- Form container -->
+    <div class="w-full max-w-sm">
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-2xl font-bold tracking-tight text-surface-900">Welcome back</h1>
+        <p class="mt-1.5 text-sm text-surface-500">Sign in to your account to continue</p>
+      </div>
+
+      <form
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        novalidate
+        aria-label="Sign in form"
+        class="space-y-5"
+      >
+        <!-- Server error banner -->
+        @if (errorMessage()) {
+          <div
+            role="alert"
+            class="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          >
+            <i class="pi pi-exclamation-circle mt-0.5 shrink-0" aria-hidden="true"></i>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <!-- Email -->
+        <div class="flex flex-col gap-1.5">
+          <label for="email" class="text-sm font-medium text-surface-700"> Email address </label>
+          <input
+            pInputText
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="you@company.com"
+            autocomplete="email"
+            [attr.aria-describedby]="emailInvalid ? 'email-error' : null"
+            [attr.aria-invalid]="emailInvalid || null"
+            [class]="emailInvalid ? 'ng-invalid ng-dirty w-full' : 'w-full'"
+          />
+          @if (emailInvalid) {
+            <small
+              id="email-error"
+              class="flex items-center gap-1 text-xs text-red-500"
+              role="alert"
+            >
+              <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+              {{ emailError }}
+            </small>
+          }
+        </div>
+
+        <!-- Password -->
+        <div class="flex flex-col gap-1.5">
+          <label for="password" class="text-sm font-medium text-surface-700"> Password </label>
+          <p-password
+            inputId="password"
+            formControlName="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            [feedback]="false"
+            [toggleMask]="true"
+            class="w-full"
+            inputStyleClass="w-full"
+            [attr.aria-describedby]="passwordInvalid ? 'password-error' : null"
+            [attr.aria-invalid]="passwordInvalid || null"
+          />
+          @if (passwordInvalid) {
+            <small
+              id="password-error"
+              class="flex items-center gap-1 text-xs text-red-500"
+              role="alert"
+            >
+              <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+              {{ passwordError }}
+            </small>
+          }
+        </div>
+
+        <!-- Submit -->
+        <p-button
+          type="submit"
+          label="Sign in"
+          icon="pi pi-sign-in"
+          styleClass="w-full"
+          [loading]="isLoading()"
+          [disabled]="isLoading()"
+          aria-label="Sign in to your account"
+        />
+      </form>
+
+      <!-- Footer note -->
+      <p class="mt-8 text-center text-xs text-surface-400">
+        Having trouble signing in? Contact your administrator.
+      </p>
+    </div>
+  </main>
+</div>
