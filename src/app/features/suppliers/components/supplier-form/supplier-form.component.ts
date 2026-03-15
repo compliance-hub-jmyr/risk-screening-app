@@ -29,6 +29,7 @@ import { SupplierService } from '../../services';
 import { CreateSupplierRequest, SupplierResponse } from '../../models';
 import { COUNTRIES, CountryOption } from '@/app/shared/data/countries.data';
 import { ERROR_CODES, ErrorResponse } from '@/app/shared/models/api';
+import { ToastService } from '@/app/core/services/toast.service';
 
 // Custom validators
 
@@ -187,6 +188,7 @@ export class SupplierFormComponent implements OnInit {
   protected readonly COMMERCIAL_NAME_MAX = 200;
   protected readonly ADDRESS_MAX = 500;
   private readonly supplierService = inject(SupplierService);
+  private readonly toastService = inject(ToastService);
 
   // Lifecycle
   ngOnInit(): void {
@@ -232,6 +234,10 @@ export class SupplierFormComponent implements OnInit {
     this.supplierService.create(request).subscribe({
       next: (supplier) => {
         this.submitting.set(false);
+        this.toastService.success(
+          `${supplier.legalName} has been added successfully.`,
+          'Supplier created',
+        );
         this.saved.emit(supplier);
       },
       error: (err: HttpErrorResponse) => {
