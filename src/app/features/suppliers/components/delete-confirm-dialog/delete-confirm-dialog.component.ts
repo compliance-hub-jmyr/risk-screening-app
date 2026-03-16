@@ -12,6 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 import { SupplierService } from '../../services';
 import { SupplierResponse } from '../../models';
@@ -20,18 +21,16 @@ import { ToastService } from '@/app/core/services/toast.service';
 @Component({
   selector: 'app-delete-confirm-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, ButtonModule, InputTextModule],
+  imports: [FormsModule, ButtonModule, InputTextModule, TranslocoModule],
   template: `
-    <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-5" *transloco="let t">
       <!-- Warning banner -->
       <div class="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
         <i class="pi pi-exclamation-triangle mt-0.5 text-lg text-red-500" aria-hidden="true"></i>
         <div class="text-sm text-red-800">
-          <p class="font-semibold">This action cannot be undone.</p>
+          <p class="font-semibold">{{ t('suppliers.dialogs.delete.cannotUndo') }}</p>
           <p class="mt-1">
-            The supplier
-            <strong>{{ supplier().legalName }}</strong>
-            and all associated data will be permanently deleted.
+            {{ t('suppliers.dialogs.delete.deleteWarning', { name: supplier().legalName }) }}
           </p>
         </div>
       </div>
@@ -39,11 +38,7 @@ import { ToastService } from '@/app/core/services/toast.service';
       <!-- Typed confirmation -->
       <div class="flex flex-col gap-1.5">
         <label for="confirm-name" class="text-sm font-medium text-surface-700">
-          Type
-          <strong class="font-semibold text-surface-900 select-all">{{
-            supplier().legalName
-          }}</strong>
-          to confirm
+          {{ t('suppliers.dialogs.delete.typeToConfirm', { name: supplier().legalName }) }}
         </label>
         <input
           pInputText
@@ -57,7 +52,7 @@ import { ToastService } from '@/app/core/services/toast.service';
           aria-describedby="confirm-name-hint"
         />
         <p id="confirm-name-hint" class="text-xs text-surface-400">
-          The name must match exactly, including capitalisation.
+          {{ t('suppliers.dialogs.delete.exactMatch') }}
         </p>
       </div>
 
@@ -70,7 +65,7 @@ import { ToastService } from '@/app/core/services/toast.service';
           [disabled]="deleting()"
           (click)="cancelled.emit()"
         >
-          <span pButtonLabel>Cancel</span>
+          <span pButtonLabel>{{ t('suppliers.dialogs.delete.cancel') }}</span>
         </button>
         <button
           pButton
@@ -78,14 +73,18 @@ import { ToastService } from '@/app/core/services/toast.service';
           class="p-button-danger"
           [disabled]="!canDelete() || deleting()"
           (click)="confirmDelete()"
-          aria-label="Confirm delete"
+          [attr.aria-label]="t('suppliers.dialogs.delete.confirmDelete')"
         >
           @if (deleting()) {
             <span pButtonIcon class="pi pi-spin pi-spinner" aria-hidden="true"></span>
           } @else {
             <span pButtonIcon class="pi pi-trash" aria-hidden="true"></span>
           }
-          <span pButtonLabel>{{ deleting() ? 'Deleting…' : 'Delete supplier' }}</span>
+          <span pButtonLabel>{{
+            deleting()
+              ? t('suppliers.dialogs.delete.deleting')
+              : t('suppliers.dialogs.delete.deleteSupplier')
+          }}</span>
         </button>
       </div>
     </div>
@@ -95,6 +94,7 @@ export class DeleteConfirmDialogComponent {
   private readonly supplierService = inject(SupplierService);
   private readonly toastService = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly translocoService = inject(TranslocoService);
 
   readonly supplier = input.required<SupplierResponse>();
   readonly deleted = output<void>();
@@ -125,7 +125,7 @@ export class DeleteConfirmDialogComponent {
       .subscribe({
         next: () => {
           this.toastService.success(
-            'Supplier deleted',
+            this.translocoService.translate('suppliers.messages.supplierDeleted'),
             `"${this.supplier().legalName}" has been deleted.`,
           );
           this.deleted.emit();
