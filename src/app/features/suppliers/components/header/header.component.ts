@@ -5,7 +5,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ButtonModule } from 'primeng/button';
 import { TranslocoModule } from '@jsverse/transloco';
 import { AuthService } from '@/app/features/auth/services';
-import { SimpleLanguageService } from '@/app/app.config';
+import { LanguageService } from '@/app/core';
 
 interface NavItem {
   label: string;
@@ -28,7 +28,7 @@ interface NavItem {
 })
 export class HeaderComponent {
   private readonly authService = inject(AuthService);
-  protected readonly languageService = inject(SimpleLanguageService);
+  protected readonly languageService = inject(LanguageService);
 
   protected readonly user = this.authService.currentUser;
   protected readonly mobileMenuOpen = signal(false);

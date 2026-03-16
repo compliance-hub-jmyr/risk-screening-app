@@ -11,7 +11,7 @@ import { TranslocoModule, TranslocoService, TRANSLOCO_SCOPE } from '@jsverse/tra
 
 import { AuthService } from '../services';
 import { ToastService } from '@/app/core/services';
-import { SimpleLanguageService } from '@/app/app.config';
+import { LanguageService } from '@/app/core';
 import { ErrorResponse, ERROR_CODES } from '@/app/shared/models/api';
 
 @Component({
@@ -27,7 +27,7 @@ export class LoginComponent {
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
-  protected readonly languageService = inject(SimpleLanguageService);
+  protected readonly languageService = inject(LanguageService);
 
   protected readonly currentYear = new Date().getFullYear();
 
