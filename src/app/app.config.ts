@@ -1,9 +1,14 @@
-import { ApplicationConfig, inject, Injectable, provideZonelessChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  Injectable,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
-import { provideTransloco, TranslocoLoader } from '@jsverse/transloco';
+import { provideTransloco, TranslocoLoader, TranslocoService } from '@jsverse/transloco';
 import { routes } from './app.routes';
 import {
   apiVersionInterceptor,
@@ -24,6 +29,25 @@ class AppTranslocoLoader implements TranslocoLoader {
         ? `/assets/i18n/${parts[1]}/${parts[0]}.json`
         : `/assets/i18n/${langPath}.json`;
     return this.http.get<Record<string, unknown>>(url);
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class SimpleLanguageService {
+  private readonly transloco = inject(TranslocoService);
+
+  setLanguage(lang: 'en' | 'es'): void {
+    this.transloco.setActiveLang(lang);
+  }
+
+  getCurrentLanguage(): string {
+    return this.transloco.getActiveLang();
+  }
+
+  toggleLanguage(): void {
+    const currentLang = this.getCurrentLanguage();
+    const newLang = currentLang === 'en' ? 'es' : 'en';
+    this.setLanguage(newLang);
   }
 }
 
