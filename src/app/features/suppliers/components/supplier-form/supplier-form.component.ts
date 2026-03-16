@@ -215,7 +215,22 @@ export class SupplierFormComponent implements OnInit {
 
     const payload = this.buildPayload();
 
-    if (this.mode() === 'edit') {
+    if (this.mode() === 'create') {
+      this.supplierService.create(payload).subscribe({
+        next: (supplier) => {
+          this.submitting.set(false);
+          this.toastService.success(
+            this.translocoService.translate('suppliers.messages.supplierCreated'),
+            this.translocoService.translate('suppliers.messages.supplierCreatedDetail'),
+          );
+          this.saved.emit(supplier);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.submitting.set(false);
+          this.handleServerError(err);
+        },
+      });
+    } else {
       const existing = this.initialValue();
       if (!existing) return;
 
