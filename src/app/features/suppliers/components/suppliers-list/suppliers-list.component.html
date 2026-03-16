@@ -1,25 +1,27 @@
-<section class="flex flex-1 flex-col gap-6 min-h-0" aria-label="Suppliers">
+<section *transloco="let t" aria-label="Suppliers" class="flex flex-1 flex-col gap-6 min-h-0">
   <!-- Page header -->
   <div class="flex flex-wrap items-start justify-between gap-3">
     <div>
-      <h1 class="text-2xl font-semibold tracking-tight text-surface-900">Suppliers</h1>
+      <h1 class="text-2xl font-semibold tracking-tight text-surface-900">
+        {{ t('suppliers.listTitle') }}
+      </h1>
       <p class="mt-1 text-sm text-surface-500">
         @if (meta()) {
-          {{ totalRecords() }} supplier{{ totalRecords() === 1 ? '' : 's' }} found
+          {{ t(totalRecords() === 1 ? 'suppliers.supplierCount' : 'suppliers.suppliersCount', { count: totalRecords() }) }}
         } @else {
           &nbsp;
         }
       </p>
     </div>
     <button
+      (click)="openCreateDialog()"
+      [attr.aria-label]="t('suppliers.addSupplier')"
+      class="p-button-sm shrink-0"
       pButton
       type="button"
-      class="p-button-sm shrink-0"
-      aria-label="Add a new supplier"
-      (click)="openCreateDialog()"
     >
-      <span pButtonIcon class="pi pi-plus" aria-hidden="true"></span>
-      <span pButtonLabel>Add supplier</span>
+      <span aria-hidden="true" class="pi pi-plus" pButtonIcon></span>
+      <span pButtonLabel>{{ t('suppliers.addSupplier') }}</span>
     </button>
   </div>
 
@@ -27,15 +29,15 @@
   <div class="rounded-xl border border-surface-200 bg-white shadow-sm">
     <!-- Filter header — always visible, toggle on mobile -->
     <button
-      type="button"
-      class="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-surface-700 sm:hidden"
       (click)="toggleFilters()"
       [attr.aria-expanded]="filtersOpen()"
       aria-controls="filter-panel"
+      class="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-surface-700 sm:hidden"
+      type="button"
     >
       <span class="flex items-center gap-2">
-        <i class="pi pi-filter text-primary-500" aria-hidden="true"></i>
-        Filters
+        <i aria-hidden="true" class="pi pi-filter text-primary-500"></i>
+        {{ t('common.filters') }}
         @if (hasActiveFilters()) {
           <span
             class="flex h-5 w-5 items-center justify-center rounded-full bg-primary-500 text-xs font-semibold text-white"
@@ -49,104 +51,114 @@
 
     <!-- Filter fields — always visible on sm+, toggled on mobile -->
     <form
-      id="filter-panel"
-      [formGroup]="filterForm"
-      [class]="filtersOpen() ? 'block' : 'hidden sm:block'"
-      class="border-t border-surface-100 px-4 py-4 sm:border-t-0"
-      aria-label="Filter suppliers"
       (submit)="$event.preventDefault()"
+      [attr.aria-label]="t('suppliers.filters.filterSuppliers')"
+      [class]="filtersOpen() ? 'block' : 'hidden sm:block'"
+      [formGroup]="filterForm"
+      class="border-t border-surface-100 px-4 py-4 sm:border-t-0"
+      id="filter-panel"
     >
       <div class="flex flex-wrap gap-3">
         <!-- Legal name -->
         <div class="flex min-w-48 flex-1 flex-col gap-1.5">
-          <label for="filter-name" class="text-xs font-medium text-surface-600">Legal name</label>
+          <label class="text-xs font-medium text-surface-600" for="filter-name">{{
+              t('suppliers.form.legalName')
+            }}</label>
           <p-iconfield>
             <p-inputicon class="pi pi-search" />
             <input
-              pInputText
-              id="filter-name"
-              type="search"
-              formControlName="legalName"
-              placeholder="Search by name…"
-              class="w-full text-sm"
+              [placeholder]="t('suppliers.filters.searchByName')"
               autocomplete="off"
+              class="w-full text-sm"
+              formControlName="legalName"
+              id="filter-name"
+              pInputText
+              type="search"
             />
           </p-iconfield>
         </div>
 
         <!-- Tax ID -->
         <div class="flex w-full flex-col gap-1.5 sm:w-40">
-          <label for="filter-taxid" class="text-xs font-medium text-surface-600">Tax ID</label>
+          <label class="text-xs font-medium text-surface-600" for="filter-taxid">{{
+              t('suppliers.form.taxId')
+            }}</label>
           <input
-            pInputText
-            id="filter-taxid"
-            type="search"
-            formControlName="taxId"
-            placeholder="Exact match"
-            class="w-full text-sm"
+            [placeholder]="t('suppliers.filters.exactMatch')"
             autocomplete="off"
+            class="w-full text-sm"
+            formControlName="taxId"
+            id="filter-taxid"
+            pInputText
+            type="search"
           />
         </div>
 
         <!-- Country -->
         <div class="flex w-full flex-col gap-1.5 sm:w-52">
-          <label for="filter-country" class="text-xs font-medium text-surface-600">Country</label>
+          <label class="text-xs font-medium text-surface-600" for="filter-country">{{
+              t('suppliers.form.country')
+            }}</label>
           <p-select
-            inputId="filter-country"
+            [attr.aria-label]="t('suppliers.filters.filterByCountry')"
+            [filterPlaceholder]="t('suppliers.filters.searchCountry')"
+            [filter]="true"
+            [options]="countryOptions()"
+            class="w-full text-sm"
             formControlName="country"
-            [options]="countryOptions"
+            inputId="filter-country"
             optionLabel="label"
             optionValue="value"
-            [filter]="true"
-            filterPlaceholder="Search country…"
-            class="w-full text-sm"
-            aria-label="Filter by country"
           />
         </div>
 
         <!-- Status -->
         <div class="flex w-full flex-col gap-1.5 sm:w-44">
-          <label for="filter-status" class="text-xs font-medium text-surface-600">Status</label>
+          <label class="text-xs font-medium text-surface-600" for="filter-status">{{
+              t('suppliers.form.status')
+            }}</label>
           <p-select
-            inputId="filter-status"
+            [attr.aria-label]="t('suppliers.filters.filterByStatus')"
+            [options]="statusOptions()"
+            class="w-full text-sm"
             formControlName="status"
-            [options]="statusOptions"
+            inputId="filter-status"
             optionLabel="label"
             optionValue="value"
-            class="w-full text-sm"
-            aria-label="Filter by status"
           />
         </div>
 
         <!-- Risk level -->
         <div class="flex w-full flex-col gap-1.5 sm:w-44">
-          <label for="filter-risk" class="text-xs font-medium text-surface-600">Risk level</label>
+          <label class="text-xs font-medium text-surface-600" for="filter-risk">{{
+              t('suppliers.form.riskLevel')
+            }}</label>
           <p-select
-            inputId="filter-risk"
+            [attr.aria-label]="t('suppliers.filters.filterByRiskLevel')"
+            [options]="riskOptions()"
+            class="w-full text-sm"
             formControlName="riskLevel"
-            [options]="riskOptions"
+            inputId="filter-risk"
             optionLabel="label"
             optionValue="value"
-            class="w-full text-sm"
-            aria-label="Filter by risk level"
           />
         </div>
 
         <!-- Clear button -->
         @if (hasActiveFilters()) {
           <div class="flex w-full flex-col gap-1.5 sm:w-auto">
-            <span class="text-xs font-medium text-transparent select-none" aria-hidden="true"
-              >&nbsp;</span
+            <span aria-hidden="true" class="text-xs font-medium text-transparent select-none"
+            >&nbsp;</span
             >
             <button
+              (click)="clearFilters()"
+              [attr.aria-label]="t('suppliers.filters.clearAllFilters')"
+              class="p-button-outlined p-button-secondary w-full sm:w-auto"
               pButton
               type="button"
-              class="p-button-outlined p-button-secondary w-full sm:w-auto"
-              (click)="clearFilters()"
-              aria-label="Clear all filters"
             >
-              <span pButtonIcon class="pi pi-filter-slash" aria-hidden="true"></span>
-              <span pButtonLabel>Clear filters</span>
+              <span aria-hidden="true" class="pi pi-filter-slash" pButtonIcon></span>
+              <span pButtonLabel>{{ t('suppliers.filters.clearFilters') }}</span>
             </button>
           </div>
         }
@@ -160,44 +172,50 @@
   >
     <p-table
       #table
-      [value]="suppliers()"
-      [lazy]="true"
       (onLazyLoad)="onLazyLoad($event)"
+      [currentPageReportTemplate]="pageReportTemplate()"
+      [lazy]="true"
       [loading]="loading()"
-      [totalRecords]="totalRecords()"
       [paginator]="true"
-      [rows]="defaultPageSize"
       [rowsPerPageOptions]="pageSizeOptions"
+      [rows]="defaultPageSize"
+      [scrollable]="true"
       [showCurrentPageReport]="true"
-      currentPageReportTemplate="Showing {first}–{last} of {totalRecords}"
       [sortField]="defaultSortField"
       [sortOrder]="defaultSortOrder"
-      [scrollable]="true"
-      scrollHeight="flex"
-      paginatorDropdownAppendTo="body"
-      class="p-datatable-sm"
       [tableStyle]="{ 'min-width': '56rem' }"
+      [totalRecords]="totalRecords()"
+      [value]="suppliers()"
       aria-label="Suppliers table"
+      class="p-datatable-sm"
+      paginatorDropdownAppendTo="body"
+      scrollHeight="flex"
     >
       <ng-template #header>
         <tr>
-          <th scope="col" pSortableColumn="legalName" style="min-width: 14rem">
-            Legal name <p-sortIcon field="legalName" />
+          <th pSortableColumn="legalName" scope="col" style="min-width: 14rem">
+            {{ t('suppliers.columns.legalName') }}
+            <p-sortIcon field="legalName" />
           </th>
-          <th scope="col" pSortableColumn="taxId" style="min-width: 9rem">
-            Tax ID <p-sortIcon field="taxId" />
+          <th pSortableColumn="taxId" scope="col" style="min-width: 9rem">
+            {{ t('suppliers.columns.taxId') }}
+            <p-sortIcon field="taxId" />
           </th>
-          <th scope="col" pSortableColumn="country" style="min-width: 9rem">
-            Country <p-sortIcon field="country" />
+          <th pSortableColumn="country" scope="col" style="min-width: 9rem">
+            {{ t('suppliers.columns.country') }}
+            <p-sortIcon field="country" />
           </th>
-          <th scope="col" pSortableColumn="status" style="min-width: 9rem">
-            Status <p-sortIcon field="status" />
+          <th pSortableColumn="status" scope="col" style="min-width: 9rem">
+            {{ t('suppliers.columns.status') }}
+            <p-sortIcon field="status" />
           </th>
-          <th scope="col" pSortableColumn="riskLevel" style="min-width: 9rem">
-            Risk <p-sortIcon field="riskLevel" />
+          <th pSortableColumn="riskLevel" scope="col" style="min-width: 9rem">
+            {{ t('suppliers.columns.riskLevel') }}
+            <p-sortIcon field="riskLevel" />
           </th>
-          <th scope="col" pSortableColumn="updatedAt" style="min-width: 11rem">
-            Last updated <p-sortIcon field="updatedAt" />
+          <th pSortableColumn="updatedAt" scope="col" style="min-width: 11rem">
+            {{ t('suppliers.columns.lastEdited') }}
+            <p-sortIcon field="updatedAt" />
           </th>
           <th scope="col" style="width: 4rem"></th>
         </tr>
@@ -221,7 +239,7 @@
             <span
               class="inline-flex items-center gap-1.5 rounded-md bg-surface-100 px-2 py-0.5 text-xs font-medium text-surface-700"
             >
-              <i class="pi pi-globe text-xs" aria-hidden="true"></i>
+              <i aria-hidden="true" class="pi pi-globe text-xs"></i>
               {{ supplier.country }}
             </span>
           </td>
@@ -236,27 +254,30 @@
 
           <!-- Risk level -->
           <td>
-            <p-tag [severity]="riskSeverity(supplier.riskLevel)" [value]="supplier.riskLevel" />
+            <p-tag
+              [severity]="riskSeverity(supplier.riskLevel)"
+              [value]="riskLabel(supplier.riskLevel)"
+            />
           </td>
 
           <!-- Last updated -->
           <td class="text-sm text-surface-500 whitespace-nowrap">
             <span class="block">{{ supplier.updatedAt | date: 'MMM d, y' }}</span>
             <span class="block text-xs text-surface-400">{{
-              supplier.updatedAt | date: 'h:mm a'
-            }}</span>
+                supplier.updatedAt | date: 'h:mm a'
+              }}</span>
           </td>
 
           <!-- Actions -->
           <td>
             <button
+              (click)="openMenu($event, supplier)"
+              [attr.aria-label]="t('suppliers.menu.optionsFor', { name: supplier.legalName })"
+              class="p-button-text p-button-sm p-button-secondary"
               pButton
               type="button"
-              class="p-button-text p-button-sm p-button-secondary"
-              (click)="openMenu($event, supplier)"
-              [attr.aria-label]="'Options for ' + supplier.legalName"
             >
-              <span pButtonIcon class="pi pi-ellipsis-v" aria-hidden="true"></span>
+              <span aria-hidden="true" class="pi pi-ellipsis-v" pButtonIcon></span>
             </button>
           </td>
         </tr>
@@ -267,7 +288,9 @@
         @for (_ of [1, 2, 3, 4, 5, 6, 7, 8]; track $index) {
           <tr>
             @for (__ of [1, 2, 3, 4, 5, 6, 7]; track $index) {
-              <td><p-skeleton height="1.25rem" /></td>
+              <td>
+                <p-skeleton height="1.25rem" />
+              </td>
             }
           </tr>
         }
@@ -279,22 +302,25 @@
           <td colspan="7">
             <div class="flex flex-col items-center justify-center gap-3 py-16 text-center">
               <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-100">
-                <i class="pi pi-building text-2xl text-surface-400" aria-hidden="true"></i>
+                <i aria-hidden="true" class="pi pi-building text-2xl text-surface-400"></i>
               </div>
               <div>
-                <p class="font-medium text-surface-700">No suppliers found</p>
+                <p class="font-medium text-surface-700">
+                  {{ t('suppliers.emptyState.noSuppliersFound') }}
+                </p>
                 <p class="mt-1 text-sm text-surface-400">
                   @if (hasActiveFilters()) {
-                    Try adjusting your filters or
+                    {{ t('suppliers.emptyState.tryAdjustingFilters') }}
                     <button
-                      type="button"
-                      class="text-primary-600 underline underline-offset-2 hover:text-primary-700"
                       (click)="clearFilters()"
+                      class="text-primary-600 underline underline-offset-2 hover:text-primary-700"
+                      type="button"
                     >
-                      clear them</button
+                      {{ t('suppliers.emptyState.clearFilters') }}
+                    </button
                     >.
                   } @else {
-                    Add your first supplier to get started.
+                    {{ t('suppliers.emptyState.addFirstSupplier') }}
                   }
                 </p>
               </div>
@@ -311,39 +337,39 @@
 
 <!-- Create supplier dialog -->
 <p-dialog
+  (onHide)="createDialogVisible.set(false)"
   [(visible)]="createDialogVisible"
-  [modal]="true"
   [draggable]="false"
+  [header]="newSupplierHeader()"
+  [modal]="true"
   [resizable]="false"
   [style]="{ width: '42rem', maxWidth: '95vw' }"
-  header="New supplier"
   styleClass="overflow-visible"
-  (onHide)="createDialogVisible.set(false)"
 >
   <app-supplier-form
-    mode="create"
-    (saved)="onSupplierCreated()"
     (cancelled)="createDialogVisible.set(false)"
+    (saved)="onSupplierCreated()"
+    mode="create"
   />
 </p-dialog>
 
 <!-- Edit supplier dialog -->
 @if (editingSupplier()) {
   <p-dialog
+    (onHide)="editDialogVisible.set(false); editingSupplier.set(null)"
     [(visible)]="editDialogVisible"
-    [modal]="true"
     [draggable]="false"
+    [header]="editSupplierHeader()"
+    [modal]="true"
     [resizable]="false"
     [style]="{ width: '42rem', maxWidth: '95vw' }"
-    header="Edit supplier"
     styleClass="overflow-visible"
-    (onHide)="editDialogVisible.set(false); editingSupplier.set(null)"
   >
     <app-supplier-form
-      mode="edit"
-      [initialValue]="editingSupplier()"
-      (saved)="onSupplierUpdated()"
       (cancelled)="editDialogVisible.set(false); editingSupplier.set(null)"
+      (saved)="onSupplierUpdated()"
+      [initialValue]="editingSupplier()"
+      mode="edit"
     />
   </p-dialog>
 }
@@ -355,7 +381,7 @@
     [(visible)]="screeningDialogVisible"
     [contentStyle]="{ 'max-height': '80vh', 'overflow-y': 'auto' }"
     [draggable]="false"
-    [header]="'Screening — ' + screeningSupplier()!.legalName"
+    [header]="screeningDialogHeader()"
     [maximizable]="true"
     [modal]="true"
     [resizable]="false"
@@ -372,10 +398,10 @@
     [(visible)]="deleteDialogVisible"
     [closable]="true"
     [draggable]="false"
+    [header]="deleteSupplierHeader()"
     [modal]="true"
     [resizable]="false"
     [style]="{ width: '32rem', maxWidth: '95vw' }"
-    header="Delete supplier"
   >
     <app-delete-confirm-dialog
       (cancelled)="closeDeleteDialog()"
@@ -397,6 +423,6 @@
     [resizable]="false"
     [style]="{ width: '42rem', maxWidth: '95vw' }"
   >
-    <app-supplier-details (closed)="closeDetailsDialog()" [supplier]="detailsSupplier()!"/>
+    <app-supplier-details (closed)="closeDetailsDialog()" [supplier]="detailsSupplier()!" />
   </p-dialog>
 }
