@@ -28,4 +28,7 @@ export const API_ENDPOINTS = {
   // Suppliers
   SUPPLIERS: `${API_BASE_URL}/suppliers`,
   SUPPLIER_BY_ID: (id: string) => `${API_BASE_URL}/suppliers/${id}`,
+
+  // Screening
+  LISTS_SEARCH: `${API_BASE_URL}/lists/search`,
 } as const;

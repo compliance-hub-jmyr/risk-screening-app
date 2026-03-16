@@ -21,7 +21,8 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { Menu, MenuModule } from 'primeng/menu';
 import { DialogModule } from 'primeng/dialog';
-import { MenuItem } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MenuItem } from 'primeng/api';
 
 import { SupplierService } from '../../services';
 import {
@@ -35,6 +36,7 @@ import {
 import { PageMetadata } from '@/app/shared/models/api';
 import { COUNTRIES, CountryOption } from '@/app/shared/data/countries.data';
 import { SupplierFormComponent } from '../supplier-form/supplier-form.component';
+import { ScreeningDialogComponent } from '@/app/features/screening/components/screening-dialog/screening-dialog.component';
 
 interface SelectOption<T extends string> {
   label: string;
@@ -58,7 +60,9 @@ interface SelectOption<T extends string> {
     InputIconModule,
     MenuModule,
     DialogModule,
+    ConfirmDialogModule,
     SupplierFormComponent,
+    ScreeningDialogComponent,
   ],
   templateUrl: './suppliers-list.component.html',
   host: { class: 'flex flex-1 flex-col min-h-0' },
@@ -170,7 +174,7 @@ export class SuppliersListComponent {
         label: 'Run screening',
         icon: 'pi pi-shield',
         command: () => {
-          // TODO: Navigate to supplier screening page when implemented
+          if (s) this.openScreeningDialog(s);
         },
       },
       { separator: true },
@@ -216,6 +220,20 @@ export class SuppliersListComponent {
     this.editDialogVisible.set(false);
     this.editingSupplier.set(null);
     this.load();
+  }
+
+  // Screening dialog
+  protected readonly screeningDialogVisible = signal(false);
+  protected readonly screeningSupplier = signal<SupplierResponse | null>(null);
+
+  protected openScreeningDialog(supplier: SupplierResponse): void {
+    this.screeningSupplier.set(supplier);
+    this.screeningDialogVisible.set(true);
+  }
+
+  protected closeScreeningDialog(): void {
+    this.screeningDialogVisible.set(false);
+    this.screeningSupplier.set(null);
   }
 
   constructor() {

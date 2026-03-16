@@ -347,3 +347,20 @@
     />
   </p-dialog>
 }
+
+<!-- Screening dialog -->
+@if (screeningSupplier()) {
+  <p-dialog
+    (onHide)="closeScreeningDialog()"
+    [(visible)]="screeningDialogVisible"
+    [contentStyle]="{ 'max-height': '80vh', 'overflow-y': 'auto' }"
+    [draggable]="false"
+    [header]="'Screening — ' + screeningSupplier()!.legalName"
+    [maximizable]="true"
+    [modal]="true"
+    [resizable]="false"
+    [style]="{ width: '70rem', maxWidth: '96vw' }"
+  >
+    <app-screening-dialog (closed)="closeScreeningDialog()" [supplier]="screeningSupplier()!"/>
+  </p-dialog>
+}
