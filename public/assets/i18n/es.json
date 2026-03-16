@@ -223,8 +223,11 @@
     },
     "messages": {
       "supplierUpdated": "Proveedor actualizado",
+      "supplierUpdatedDetail": "La información del proveedor ha sido guardada.",
       "supplierCreated": "Proveedor creado",
-      "supplierDeleted": "Proveedor eliminado"
+      "supplierCreatedDetail": "El nuevo proveedor ha sido añadido.",
+      "supplierDeleted": "Proveedor eliminado",
+      "supplierDeletedDetail": "\"{{name}}\" ha sido eliminado permanentemente."
     },
     "dialogs": {
       "newSupplier": "Nuevo Proveedor",
