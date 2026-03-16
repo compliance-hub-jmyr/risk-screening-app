@@ -384,3 +384,19 @@
     />
   </p-dialog>
 }
+
+<!-- View details dialog -->
+@if (detailsSupplier()) {
+  <p-dialog
+    (onHide)="closeDetailsDialog()"
+    [(visible)]="detailsDialogVisible"
+    [contentStyle]="{ 'max-height': '85vh', 'overflow-y': 'auto' }"
+    [draggable]="false"
+    [header]="detailsSupplier()!.legalName"
+    [modal]="true"
+    [resizable]="false"
+    [style]="{ width: '42rem', maxWidth: '95vw' }"
+  >
+    <app-supplier-details (closed)="closeDetailsDialog()" [supplier]="detailsSupplier()!"/>
+  </p-dialog>
+}

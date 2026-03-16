@@ -37,7 +37,7 @@ import { COUNTRIES, CountryOption } from '@/app/shared/data/countries.data';
 import { SupplierFormComponent } from '../supplier-form/supplier-form.component';
 import { ScreeningDialogComponent } from '@/app/features/screening/components/screening-dialog/screening-dialog.component';
 import { DeleteConfirmDialogComponent } from '../delete-confirm-dialog/delete-confirm-dialog.component';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import { SupplierDetailsComponent } from '../supplier-details/supplier-details.component';
 
 interface SelectOption<T extends string> {
   label: string;
@@ -61,10 +61,10 @@ interface SelectOption<T extends string> {
     InputIconModule,
     MenuModule,
     DialogModule,
-    ConfirmDialogModule,
     SupplierFormComponent,
     ScreeningDialogComponent,
-    DeleteConfirmDialogComponent
+    DeleteConfirmDialogComponent,
+    SupplierDetailsComponent,
   ],
   templateUrl: './suppliers-list.component.html',
   host: { class: 'flex flex-1 flex-col min-h-0' },
@@ -161,7 +161,7 @@ export class SuppliersListComponent {
         label: 'View details',
         icon: 'pi pi-eye',
         command: () => {
-          // TODO: Navigate to supplier details page when implemented
+          if (s) this.openDetailsDialog(s);
         },
       },
       {
@@ -194,6 +194,20 @@ export class SuppliersListComponent {
   protected openMenu(event: MouseEvent, supplier: SupplierResponse): void {
     this.activeSupplier.set(supplier);
     this.actionsMenu().toggle(event);
+  }
+
+  // Details dialog
+  protected readonly detailsDialogVisible = signal(false);
+  protected readonly detailsSupplier = signal<SupplierResponse | null>(null);
+
+  protected openDetailsDialog(supplier: SupplierResponse): void {
+    this.detailsSupplier.set(supplier);
+    this.detailsDialogVisible.set(true);
+  }
+
+  protected closeDetailsDialog(): void {
+    this.detailsDialogVisible.set(false);
+    this.detailsSupplier.set(null);
   }
 
   // Create dialog
