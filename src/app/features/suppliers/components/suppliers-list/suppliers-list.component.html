@@ -1,0 +1,402 @@
+<section class="flex flex-1 flex-col gap-6 min-h-0" aria-label="Suppliers">
+  <!-- Page header -->
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight text-surface-900">Suppliers</h1>
+      <p class="mt-1 text-sm text-surface-500">
+        @if (meta()) {
+          {{ totalRecords() }} supplier{{ totalRecords() === 1 ? '' : 's' }} found
+        } @else {
+          &nbsp;
+        }
+      </p>
+    </div>
+    <button
+      pButton
+      type="button"
+      class="p-button-sm shrink-0"
+      aria-label="Add a new supplier"
+      (click)="openCreateDialog()"
+    >
+      <span pButtonIcon class="pi pi-plus" aria-hidden="true"></span>
+      <span pButtonLabel>Add supplier</span>
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="rounded-xl border border-surface-200 bg-white shadow-sm">
+    <!-- Filter header — always visible, toggle on mobile -->
+    <button
+      type="button"
+      class="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-surface-700 sm:hidden"
+      (click)="toggleFilters()"
+      [attr.aria-expanded]="filtersOpen()"
+      aria-controls="filter-panel"
+    >
+      <span class="flex items-center gap-2">
+        <i class="pi pi-filter text-primary-500" aria-hidden="true"></i>
+        Filters
+        @if (hasActiveFilters()) {
+          <span
+            class="flex h-5 w-5 items-center justify-center rounded-full bg-primary-500 text-xs font-semibold text-white"
+          >
+            {{ activeFilterCount() }}
+          </span>
+        }
+      </span>
+      <i [class]="filtersOpen() ? 'pi pi-chevron-up' : 'pi pi-chevron-down'" aria-hidden="true"></i>
+    </button>
+
+    <!-- Filter fields — always visible on sm+, toggled on mobile -->
+    <form
+      id="filter-panel"
+      [formGroup]="filterForm"
+      [class]="filtersOpen() ? 'block' : 'hidden sm:block'"
+      class="border-t border-surface-100 px-4 py-4 sm:border-t-0"
+      aria-label="Filter suppliers"
+      (submit)="$event.preventDefault()"
+    >
+      <div class="flex flex-wrap gap-3">
+        <!-- Legal name -->
+        <div class="flex min-w-48 flex-1 flex-col gap-1.5">
+          <label for="filter-name" class="text-xs font-medium text-surface-600">Legal name</label>
+          <p-iconfield>
+            <p-inputicon class="pi pi-search" />
+            <input
+              pInputText
+              id="filter-name"
+              type="search"
+              formControlName="legalName"
+              placeholder="Search by name…"
+              class="w-full text-sm"
+              autocomplete="off"
+            />
+          </p-iconfield>
+        </div>
+
+        <!-- Tax ID -->
+        <div class="flex w-full flex-col gap-1.5 sm:w-40">
+          <label for="filter-taxid" class="text-xs font-medium text-surface-600">Tax ID</label>
+          <input
+            pInputText
+            id="filter-taxid"
+            type="search"
+            formControlName="taxId"
+            placeholder="Exact match"
+            class="w-full text-sm"
+            autocomplete="off"
+          />
+        </div>
+
+        <!-- Country -->
+        <div class="flex w-full flex-col gap-1.5 sm:w-52">
+          <label for="filter-country" class="text-xs font-medium text-surface-600">Country</label>
+          <p-select
+            inputId="filter-country"
+            formControlName="country"
+            [options]="countryOptions"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            filterPlaceholder="Search country…"
+            class="w-full text-sm"
+            aria-label="Filter by country"
+          />
+        </div>
+
+        <!-- Status -->
+        <div class="flex w-full flex-col gap-1.5 sm:w-44">
+          <label for="filter-status" class="text-xs font-medium text-surface-600">Status</label>
+          <p-select
+            inputId="filter-status"
+            formControlName="status"
+            [options]="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full text-sm"
+            aria-label="Filter by status"
+          />
+        </div>
+
+        <!-- Risk level -->
+        <div class="flex w-full flex-col gap-1.5 sm:w-44">
+          <label for="filter-risk" class="text-xs font-medium text-surface-600">Risk level</label>
+          <p-select
+            inputId="filter-risk"
+            formControlName="riskLevel"
+            [options]="riskOptions"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full text-sm"
+            aria-label="Filter by risk level"
+          />
+        </div>
+
+        <!-- Clear button -->
+        @if (hasActiveFilters()) {
+          <div class="flex w-full flex-col gap-1.5 sm:w-auto">
+            <span class="text-xs font-medium text-transparent select-none" aria-hidden="true"
+              >&nbsp;</span
+            >
+            <button
+              pButton
+              type="button"
+              class="p-button-outlined p-button-secondary w-full sm:w-auto"
+              (click)="clearFilters()"
+              aria-label="Clear all filters"
+            >
+              <span pButtonIcon class="pi pi-filter-slash" aria-hidden="true"></span>
+              <span pButtonLabel>Clear filters</span>
+            </button>
+          </div>
+        }
+      </div>
+    </form>
+  </div>
+
+  <!-- ── Table ──────────────────────────────────────────────────────────────── -->
+  <div
+    class="flex flex-1 flex-col min-h-0 rounded-xl border border-surface-200 bg-white shadow-sm overflow-hidden"
+  >
+    <p-table
+      #table
+      [value]="suppliers()"
+      [lazy]="true"
+      (onLazyLoad)="onLazyLoad($event)"
+      [loading]="loading()"
+      [totalRecords]="totalRecords()"
+      [paginator]="true"
+      [rows]="defaultPageSize"
+      [rowsPerPageOptions]="pageSizeOptions"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first}–{last} of {totalRecords}"
+      [sortField]="defaultSortField"
+      [sortOrder]="defaultSortOrder"
+      [scrollable]="true"
+      scrollHeight="flex"
+      paginatorDropdownAppendTo="body"
+      class="p-datatable-sm"
+      [tableStyle]="{ 'min-width': '56rem' }"
+      aria-label="Suppliers table"
+    >
+      <ng-template #header>
+        <tr>
+          <th scope="col" pSortableColumn="legalName" style="min-width: 14rem">
+            Legal name <p-sortIcon field="legalName" />
+          </th>
+          <th scope="col" pSortableColumn="taxId" style="min-width: 9rem">
+            Tax ID <p-sortIcon field="taxId" />
+          </th>
+          <th scope="col" pSortableColumn="country" style="min-width: 9rem">
+            Country <p-sortIcon field="country" />
+          </th>
+          <th scope="col" pSortableColumn="status" style="min-width: 9rem">
+            Status <p-sortIcon field="status" />
+          </th>
+          <th scope="col" pSortableColumn="riskLevel" style="min-width: 9rem">
+            Risk <p-sortIcon field="riskLevel" />
+          </th>
+          <th scope="col" pSortableColumn="updatedAt" style="min-width: 11rem">
+            Last updated <p-sortIcon field="updatedAt" />
+          </th>
+          <th scope="col" style="width: 4rem"></th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-supplier>
+        <tr class="hover:bg-surface-50 transition-colors">
+          <!-- Legal name + commercial name -->
+          <td>
+            <div>
+              <p class="font-medium text-surface-900 leading-snug">{{ supplier.legalName }}</p>
+              <p class="text-xs text-surface-400 mt-0.5">{{ supplier.commercialName }}</p>
+            </div>
+          </td>
+
+          <!-- Tax ID -->
+          <td class="font-mono text-sm text-surface-600">{{ supplier.taxId }}</td>
+
+          <!-- Country -->
+          <td>
+            <span
+              class="inline-flex items-center gap-1.5 rounded-md bg-surface-100 px-2 py-0.5 text-xs font-medium text-surface-700"
+            >
+              <i class="pi pi-globe text-xs" aria-hidden="true"></i>
+              {{ supplier.country }}
+            </span>
+          </td>
+
+          <!-- Status -->
+          <td>
+            <p-tag
+              [severity]="statusSeverity(supplier.status)"
+              [value]="statusLabel(supplier.status)"
+            />
+          </td>
+
+          <!-- Risk level -->
+          <td>
+            <p-tag [severity]="riskSeverity(supplier.riskLevel)" [value]="supplier.riskLevel" />
+          </td>
+
+          <!-- Last updated -->
+          <td class="text-sm text-surface-500 whitespace-nowrap">
+            <span class="block">{{ supplier.updatedAt | date: 'MMM d, y' }}</span>
+            <span class="block text-xs text-surface-400">{{
+              supplier.updatedAt | date: 'h:mm a'
+            }}</span>
+          </td>
+
+          <!-- Actions -->
+          <td>
+            <button
+              pButton
+              type="button"
+              class="p-button-text p-button-sm p-button-secondary"
+              (click)="openMenu($event, supplier)"
+              [attr.aria-label]="'Options for ' + supplier.legalName"
+            >
+              <span pButtonIcon class="pi pi-ellipsis-v" aria-hidden="true"></span>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- Loading skeleton -->
+      <ng-template #loadingbody>
+        @for (_ of [1, 2, 3, 4, 5, 6, 7, 8]; track $index) {
+          <tr>
+            @for (__ of [1, 2, 3, 4, 5, 6, 7]; track $index) {
+              <td><p-skeleton height="1.25rem" /></td>
+            }
+          </tr>
+        }
+      </ng-template>
+
+      <!-- Empty state -->
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="7">
+            <div class="flex flex-col items-center justify-center gap-3 py-16 text-center">
+              <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-100">
+                <i class="pi pi-building text-2xl text-surface-400" aria-hidden="true"></i>
+              </div>
+              <div>
+                <p class="font-medium text-surface-700">No suppliers found</p>
+                <p class="mt-1 text-sm text-surface-400">
+                  @if (hasActiveFilters()) {
+                    Try adjusting your filters or
+                    <button
+                      type="button"
+                      class="text-primary-600 underline underline-offset-2 hover:text-primary-700"
+                      (click)="clearFilters()"
+                    >
+                      clear them</button
+                    >.
+                  } @else {
+                    Add your first supplier to get started.
+                  }
+                </p>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</section>
+
+<!-- Row actions menu -->
+<p-menu #actionsMenu [model]="rowMenuItems()" [popup]="true" />
+
+<!-- Create supplier dialog -->
+<p-dialog
+  [(visible)]="createDialogVisible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '42rem', maxWidth: '95vw' }"
+  header="New supplier"
+  styleClass="overflow-visible"
+  (onHide)="createDialogVisible.set(false)"
+>
+  <app-supplier-form
+    mode="create"
+    (saved)="onSupplierCreated()"
+    (cancelled)="createDialogVisible.set(false)"
+  />
+</p-dialog>
+
+<!-- Edit supplier dialog -->
+@if (editingSupplier()) {
+  <p-dialog
+    [(visible)]="editDialogVisible"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '42rem', maxWidth: '95vw' }"
+    header="Edit supplier"
+    styleClass="overflow-visible"
+    (onHide)="editDialogVisible.set(false); editingSupplier.set(null)"
+  >
+    <app-supplier-form
+      mode="edit"
+      [initialValue]="editingSupplier()"
+      (saved)="onSupplierUpdated()"
+      (cancelled)="editDialogVisible.set(false); editingSupplier.set(null)"
+    />
+  </p-dialog>
+}
+
+<!-- Screening dialog -->
+@if (screeningSupplier()) {
+  <p-dialog
+    (onHide)="closeScreeningDialog()"
+    [(visible)]="screeningDialogVisible"
+    [contentStyle]="{ 'max-height': '80vh', 'overflow-y': 'auto' }"
+    [draggable]="false"
+    [header]="'Screening — ' + screeningSupplier()!.legalName"
+    [maximizable]="true"
+    [modal]="true"
+    [resizable]="false"
+    [style]="{ width: '70rem', maxWidth: '96vw' }"
+  >
+    <app-screening-dialog (closed)="closeScreeningDialog()" [supplier]="screeningSupplier()!" />
+  </p-dialog>
+}
+
+<!-- Delete supplier dialog -->
+@if (deletingSupplier()) {
+  <p-dialog
+    (onHide)="closeDeleteDialog()"
+    [(visible)]="deleteDialogVisible"
+    [closable]="true"
+    [draggable]="false"
+    [modal]="true"
+    [resizable]="false"
+    [style]="{ width: '32rem', maxWidth: '95vw' }"
+    header="Delete supplier"
+  >
+    <app-delete-confirm-dialog
+      (cancelled)="closeDeleteDialog()"
+      (deleted)="onSupplierDeleted()"
+      [supplier]="deletingSupplier()!"
+    />
+  </p-dialog>
+}
+
+<!-- View details dialog -->
+@if (detailsSupplier()) {
+  <p-dialog
+    (onHide)="closeDetailsDialog()"
+    [(visible)]="detailsDialogVisible"
+    [contentStyle]="{ 'max-height': '85vh', 'overflow-y': 'auto' }"
+    [draggable]="false"
+    [header]="detailsSupplier()!.legalName"
+    [modal]="true"
+    [resizable]="false"
+    [style]="{ width: '42rem', maxWidth: '95vw' }"
+  >
+    <app-supplier-details (closed)="closeDetailsDialog()" [supplier]="detailsSupplier()!"/>
+  </p-dialog>
+}

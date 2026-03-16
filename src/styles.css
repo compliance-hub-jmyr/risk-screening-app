@@ -1,3 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+@import 'primeicons/primeicons.css';
+@plugin "tailwindcss-primeui";
+
+html,
+body {
+  @apply m-0 p-0 h-full w-full bg-surface-50 text-surface-900 antialiased;
+}
+
+/* Base configuration for primeNG typography and general transitions if needed */
+body {
+  font-family: var(--p-font-family, ui-sans-serif, system-ui, sans-serif), serif;
+}
