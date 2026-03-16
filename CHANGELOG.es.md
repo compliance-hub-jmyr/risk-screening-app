@@ -7,6 +7,14 @@ Versionado: [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ---
 
+## [1.0.1] - 2026-03-16
+
+### Corregido
+
+- `nginx.conf` — se agregó `Cache-Control: no-cache` para `index.html` para evitar que los navegadores cacheen el punto de entrada entre despliegues. Los assets con hash (JS/CSS) siguen cacheándose con `immutable, 1y`. Esto corrige un problema en Brave y Edge donde el `index.html` cacheado referenciaba nombres de archivos desactualizados tras un nuevo deploy, causando errores 404 en archivos CSS/JS.
+
+---
+
 ## [1.0.0] - 2026-03-16
 
 ### Agregado
