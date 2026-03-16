@@ -126,7 +126,9 @@ export class DeleteConfirmDialogComponent {
         next: () => {
           this.toastService.success(
             this.translocoService.translate('suppliers.messages.supplierDeleted'),
-            `"${this.supplier().legalName}" has been deleted.`,
+            this.translocoService.translate('suppliers.messages.supplierDeletedDetail', {
+              name: this.supplier().legalName,
+            }),
           );
           this.deleted.emit();
         },
