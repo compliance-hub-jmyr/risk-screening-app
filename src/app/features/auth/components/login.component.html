@@ -55,25 +55,33 @@
       <!-- Feature list -->
       <ul class="flex flex-col gap-3" role="list">
         <li class="flex items-center gap-3">
-          <span class="flex h-7 w-7 sh§rink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10">
+          <span
+            class="flex h-7 w-7 sh§rink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10"
+          >
             <i class="pi pi-shield text-xs text-white"></i>
           </span>
           <span class="text-sm text-primary-100/90">{{ t('branding.features.watchlists') }}</span>
         </li>
         <li class="flex items-center gap-3">
-          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10">
+          <span
+            class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10"
+          >
             <i class="pi pi-bolt text-xs text-white"></i>
           </span>
           <span class="text-sm text-primary-100/90">{{ t('branding.features.realtime') }}</span>
         </li>
         <li class="flex items-center gap-3">
-          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10">
+          <span
+            class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10"
+          >
             <i class="pi pi-history text-xs text-white"></i>
           </span>
           <span class="text-sm text-primary-100/90">{{ t('branding.features.history') }}</span>
         </li>
         <li class="flex items-center gap-3">
-          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10">
+          <span
+            class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10"
+          >
             <i class="pi pi-lock text-xs text-white"></i>
           </span>
           <span class="text-sm text-primary-100/90">{{ t('branding.features.audit') }}</span>
@@ -88,7 +96,38 @@
   </aside>
 
   <!-- Right form panel -->
-  <main class="flex flex-1 flex-col items-center justify-center bg-surface-0 px-6 py-12 sm:px-12">
+  <main
+    class="relative flex flex-1 flex-col items-center justify-center bg-surface-0 px-6 py-12 sm:px-12"
+  >
+    <!-- Language toggle switch - positioned at top right -->
+    <div class="absolute top-6 right-6">
+      <div class="flex items-center rounded-lg bg-surface-100 p-1">
+        <button
+          type="button"
+          (click)="onToggleLanguage()"
+          [class]="
+            getCurrentLanguage() === 'en'
+              ? 'rounded-md bg-white px-3 py-1.5 text-sm font-medium text-surface-900 shadow-sm'
+              : 'rounded-md px-3 py-1.5 text-sm font-medium text-surface-600 hover:text-surface-900'
+          "
+          [attr.aria-pressed]="getCurrentLanguage() === 'en'"
+        >
+          🇺🇸 EN
+        </button>
+        <button
+          type="button"
+          (click)="onToggleLanguage()"
+          [class]="
+            getCurrentLanguage() === 'es'
+              ? 'rounded-md bg-white px-3 py-1.5 text-sm font-medium text-surface-900 shadow-sm'
+              : 'rounded-md px-3 py-1.5 text-sm font-medium text-surface-600 hover:text-surface-900'
+          "
+          [attr.aria-pressed]="getCurrentLanguage() === 'es'"
+        >
+          🇪🇸 ES
+        </button>
+      </div>
+    </div>
     <!-- Mobile-only logo -->
     <div class="mb-10 flex flex-col items-center lg:hidden">
       <div

@@ -11,6 +11,7 @@ import { TranslocoModule, TranslocoService, TRANSLOCO_SCOPE } from '@jsverse/tra
 
 import { AuthService } from '../services';
 import { ToastService } from '@/app/core/services';
+import { SimpleLanguageService } from '@/app/app.config';
 import { ErrorResponse, ERROR_CODES } from '@/app/shared/models/api';
 
 @Component({
@@ -26,6 +27,7 @@ export class LoginComponent {
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
+  protected readonly languageService = inject(SimpleLanguageService);
 
   protected readonly currentYear = new Date().getFullYear();
 
@@ -90,14 +92,24 @@ export class LoginComponent {
 
   protected get emailError(): string {
     const ctrl = this.form.controls.email;
-    if (ctrl.hasError('required')) return this.transloco.translate('auth.form.email.errors.required');
+    if (ctrl.hasError('required'))
+      return this.transloco.translate('auth.form.email.errors.required');
     if (ctrl.hasError('email')) return this.transloco.translate('auth.form.email.errors.email');
     return '';
   }
 
   protected get passwordError(): string {
     const ctrl = this.form.controls.password;
-    if (ctrl.hasError('required')) return this.transloco.translate('auth.form.password.errors.required');
+    if (ctrl.hasError('required'))
+      return this.transloco.translate('auth.form.password.errors.required');
     return '';
+  }
+
+  protected onToggleLanguage(): void {
+    this.languageService.toggleLanguage();
+  }
+
+  protected getCurrentLanguage(): string {
+    return this.languageService.getCurrentLanguage();
   }
 }
