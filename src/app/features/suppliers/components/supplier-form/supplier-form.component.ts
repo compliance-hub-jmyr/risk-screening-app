@@ -223,7 +223,8 @@ export class SupplierFormComponent implements OnInit {
         next: (supplier) => {
           this.submitting.set(false);
           this.toastService.success(
-            this.translocoService.translate('suppliers.messages.supplierCreated'),
+            this.translocoService.translate('suppliers.messages.supplierUpdated'),
+            this.translocoService.translate('suppliers.messages.supplierUpdatedDetail'),
           );
           this.saved.emit(supplier);
         },

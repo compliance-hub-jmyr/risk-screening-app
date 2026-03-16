@@ -121,7 +121,7 @@ export class SuppliersListComponent {
   });
 
   protected readonly countryOptions = computed(() => {
-    this.translationsLoaded();
+    if (!Object.keys(this.translationsLoaded()).length) return [];
     return [
       { label: this.translocoService.translate('suppliers.filters.allCountries'), value: '' },
       ...COUNTRIES.map((c: CountryOption) => ({ label: `${c.name} (${c.code})`, value: c.code })),
@@ -129,7 +129,7 @@ export class SuppliersListComponent {
   });
 
   protected readonly statusOptions = computed((): SelectOption<SupplierStatus>[] => {
-    this.translationsLoaded();
+    if (!Object.keys(this.translationsLoaded()).length) return [];
     return [
       { label: this.translocoService.translate('suppliers.filters.allStatuses'), value: '' },
       { label: this.translocoService.translate('suppliers.details.status.pending'), value: 'Pending' },
@@ -140,7 +140,7 @@ export class SuppliersListComponent {
   });
 
   protected readonly riskOptions = computed((): SelectOption<RiskLevel>[] => {
-    this.translationsLoaded();
+    if (!Object.keys(this.translationsLoaded()).length) return [];
     return [
       { label: this.translocoService.translate('suppliers.filters.allRiskLevels'), value: '' },
       { label: this.translocoService.translate('suppliers.riskLevel.none'), value: 'None' },
@@ -152,26 +152,26 @@ export class SuppliersListComponent {
 
   // Dialog headers
   protected readonly newSupplierHeader = computed(() => {
-    this.translationsLoaded();
+    if (!Object.keys(this.translationsLoaded()).length) return '';
     return this.translocoService.translate('suppliers.dialogs.newSupplier');
   });
   protected readonly editSupplierHeader = computed(() => {
-    this.translationsLoaded();
+    if (!Object.keys(this.translationsLoaded()).length) return '';
     return this.translocoService.translate('suppliers.dialogs.editSupplier');
   });
   protected readonly deleteSupplierHeader = computed(() => {
-    this.translationsLoaded();
+    if (!Object.keys(this.translationsLoaded()).length) return '';
     return this.translocoService.translate('suppliers.dialogs.deleteSupplier');
   });
   protected readonly screeningDialogHeader = computed(() => {
-    this.translationsLoaded();
+    if (!Object.keys(this.translationsLoaded()).length) return '';
     const s = this.screeningSupplier();
     return s
       ? this.translocoService.translate('suppliers.screening.dialogHeader', { name: s.legalName })
       : '';
   });
   protected readonly pageReportTemplate = computed(() => {
-    this.translationsLoaded();
+    if (!Object.keys(this.translationsLoaded()).length) return '';
     return this.translocoService.translate('suppliers.pageReport');
   });
 
@@ -199,7 +199,7 @@ export class SuppliersListComponent {
   protected readonly activeSupplier = signal<SupplierResponse | null>(null);
 
   protected readonly rowMenuItems = computed<MenuItem[]>(() => {
-    this.translationsLoaded();
+    if (!Object.keys(this.translationsLoaded()).length) return [];
     const s = this.activeSupplier();
     if (!s) return [];
     return [
