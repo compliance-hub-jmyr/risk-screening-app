@@ -13,6 +13,7 @@ import { TagModule } from 'primeng/tag';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 import { ScreeningService } from '../../services';
 import { ListSource, ScreeningEntry, ScreeningResponse } from '../../models';
@@ -31,39 +32,58 @@ interface SourceOption {
 @Component({
   selector: 'app-screening-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, ButtonModule, TagModule, CheckboxModule, SkeletonModule, TableModule],
+  imports: [
+    FormsModule,
+    ButtonModule,
+    TagModule,
+    CheckboxModule,
+    SkeletonModule,
+    TableModule,
+    TranslocoModule,
+  ],
   templateUrl: './screening-dialog.component.html',
 })
 export class ScreeningDialogComponent {
   private readonly screeningService = inject(ScreeningService);
+  private readonly translocoService = inject(TranslocoService);
 
   readonly supplier = input.required<SupplierResponse>();
   readonly closed = output<void>();
 
-  // Source toggles — none checked by default, user must choose
-  protected readonly sources = signal<SourceOption[]>([
-    {
-      label: 'OFAC',
-      fullName: 'OFAC Sanctions List',
-      url: 'https://sanctionssearch.ofac.treas.gov/',
-      value: 'OFAC',
-      checked: false,
-    },
-    {
-      label: 'World Bank',
-      fullName: 'The World Bank — Debarred Firms',
-      url: 'https://projects.worldbank.org/en/projects-operations/procurement/debarred-firms',
-      value: 'WORLD_BANK',
-      checked: false,
-    },
-    {
-      label: 'ICIJ',
-      fullName: 'Offshore Leaks Database',
-      url: 'https://offshoreleaks.icij.org',
-      value: 'ICIJ',
-      checked: false,
-    },
-  ]);
+  // Source selection state
+  private readonly sourceCheckedState = signal<Record<ListSource, boolean>>({
+    OFAC: false,
+    WORLD_BANK: false,
+    ICIJ: false,
+  });
+
+  // Source toggles
+  protected readonly sources = computed<SourceOption[]>(() => {
+    const checkedState = this.sourceCheckedState();
+    return [
+      {
+        label: 'OFAC',
+        fullName: this.translocoService.translate('suppliers.sources.ofac'),
+        url: 'https://sanctionssearch.ofac.treas.gov/',
+        value: 'OFAC',
+        checked: checkedState.OFAC,
+      },
+      {
+        label: 'World Bank',
+        fullName: this.translocoService.translate('suppliers.sources.worldBank'),
+        url: 'https://projects.worldbank.org/en/projects-operations/procurement/debarred-firms',
+        value: 'WORLD_BANK',
+        checked: checkedState.WORLD_BANK,
+      },
+      {
+        label: 'ICIJ',
+        fullName: this.translocoService.translate('suppliers.sources.icij'),
+        url: 'https://offshoreleaks.icij.org',
+        value: 'ICIJ',
+        checked: checkedState.ICIJ,
+      },
+    ];
+  });
 
   protected readonly selectedSources = computed<ListSource[]>(() =>
     this.sources()
@@ -95,20 +115,15 @@ export class ScreeningDialogComponent {
   );
 
   // Whether each source was part of the last executed search
-  protected readonly ranOfac = computed(
-    () => this.sources().find((s) => s.value === 'OFAC')?.checked ?? false,
-  );
-  protected readonly ranWorldBank = computed(
-    () => this.sources().find((s) => s.value === 'WORLD_BANK')?.checked ?? false,
-  );
-  protected readonly ranIcij = computed(
-    () => this.sources().find((s) => s.value === 'ICIJ')?.checked ?? false,
-  );
+  protected readonly ranOfac = computed(() => this.sourceCheckedState().OFAC);
+  protected readonly ranWorldBank = computed(() => this.sourceCheckedState().WORLD_BANK);
+  protected readonly ranIcij = computed(() => this.sourceCheckedState().ICIJ);
 
   protected toggleSource(value: ListSource): void {
-    this.sources.update((list) =>
-      list.map((s) => (s.value === value ? { ...s, checked: !s.checked } : s)),
-    );
+    this.sourceCheckedState.update((state) => ({
+      ...state,
+      [value]: !state[value],
+    }));
   }
 
   protected runScreening(): void {
@@ -129,7 +144,7 @@ export class ScreeningDialogComponent {
     });
   }
 
-  // ── Display helpers ────────────────────────────────────────────────────────
+  // Display helpers
 
   protected sourceSeverity(source: ListSource): 'danger' | 'warn' | 'info' {
     const map: Record<ListSource, 'danger' | 'warn' | 'info'> = {
@@ -149,10 +164,5 @@ export class ScreeningDialogComponent {
     if (score >= 90) return 'bg-red-100 text-red-700';
     if (score >= 70) return 'bg-orange-100 text-orange-700';
     return 'bg-yellow-100 text-yellow-700';
-  }
-
-  protected formatDateRange(from: string | null, to: string | null): string {
-    if (!from && !to) return '—';
-    return `${from ?? '?'} – ${to ?? 'present'}`;
   }
 }
