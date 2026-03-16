@@ -1,8 +1,8 @@
-<div class="flex min-h-screen">
+<div *transloco="let t; scope: 'auth'; prefix: 'auth'" class="flex min-h-screen">
   <!-- Left branding panel -->
   <aside
-    class="relative hidden lg:flex lg:w-[45%] flex-col justify-between overflow-hidden bg-primary-600 px-12 py-10"
     aria-hidden="true"
+    class="relative hidden lg:flex lg:w-[45%] flex-col justify-between overflow-hidden bg-primary-600 px-12 py-10"
   >
     <!-- Decorative blobs -->
     <div
@@ -22,12 +22,12 @@
       >
         <svg
           class="h-5 w-5 text-white"
-          viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
         >
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
@@ -42,36 +42,48 @@
           class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-primary-100 ring-1 ring-white/15"
         >
           <span class="h-1.5 w-1.5 rounded-full bg-green-400"></span>
-          Compliance-ready platform
+          {{ t('branding.tagline') }}
         </div>
         <h2 class="text-4xl font-bold leading-[1.15] tracking-tight text-white">
-          Supplier risk<br />screening, <br />
-          <span class="text-primary-200">simplified.</span>
+          {{ t('branding.headline') }}
         </h2>
         <p class="text-sm leading-relaxed text-primary-100/75 max-w-xs">
-          Cross-check your suppliers against OFAC, World Bank and ICIJ watchlists in seconds — not
-          hours.
+          {{ t('branding.description') }}
         </p>
       </div>
 
       <!-- Feature list -->
       <ul class="flex flex-col gap-3" role="list">
-        @for (feature of brandingFeatures; track feature.label) {
-          <li class="flex items-center gap-3">
-            <span
-              class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10"
-            >
-              <i [class]="feature.icon + ' text-xs text-white'"></i>
-            </span>
-            <span class="text-sm text-primary-100/90">{{ feature.label }}</span>
-          </li>
-        }
+        <li class="flex items-center gap-3">
+          <span class="flex h-7 w-7 sh§rink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10">
+            <i class="pi pi-shield text-xs text-white"></i>
+          </span>
+          <span class="text-sm text-primary-100/90">{{ t('branding.features.watchlists') }}</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10">
+            <i class="pi pi-bolt text-xs text-white"></i>
+          </span>
+          <span class="text-sm text-primary-100/90">{{ t('branding.features.realtime') }}</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10">
+            <i class="pi pi-history text-xs text-white"></i>
+          </span>
+          <span class="text-sm text-primary-100/90">{{ t('branding.features.history') }}</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10">
+            <i class="pi pi-lock text-xs text-white"></i>
+          </span>
+          <span class="text-sm text-primary-100/90">{{ t('branding.features.audit') }}</span>
+        </li>
       </ul>
     </div>
 
     <!-- Bottom footnote -->
     <p class="relative z-10 text-xs text-primary-200/50">
-      © {{ currentYear }} Risk Screening Platform. All rights reserved.
+      {{ t('branding.copyright', { year: currentYear }) }}
     </p>
   </aside>
 
@@ -83,14 +95,14 @@
         class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-500 shadow-lg"
       >
         <svg
+          aria-hidden="true"
           class="h-6 w-6 text-white"
-          viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          aria-hidden="true"
+          stroke-width="2"
+          viewBox="0 0 24 24"
         >
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
@@ -102,49 +114,51 @@
     <div class="w-full max-w-sm">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-2xl font-bold tracking-tight text-surface-900">Welcome back</h1>
-        <p class="mt-1.5 text-sm text-surface-500">Sign in to your account to continue</p>
+        <h1 class="text-2xl font-bold tracking-tight text-surface-900">{{ t('form.title') }}</h1>
+        <p class="mt-1.5 text-sm text-surface-500">{{ t('form.subtitle') }}</p>
       </div>
 
       <form
-        [formGroup]="form"
         (ngSubmit)="onSubmit()"
-        novalidate
-        aria-label="Sign in form"
+        [attr.aria-label]="t('form.submit')"
+        [formGroup]="form"
         class="space-y-5"
+        novalidate
       >
         <!-- Server error banner -->
         @if (errorMessage()) {
           <div
-            role="alert"
             class="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            role="alert"
           >
-            <i class="pi pi-exclamation-circle mt-0.5 shrink-0" aria-hidden="true"></i>
+            <i aria-hidden="true" class="pi pi-exclamation-circle mt-0.5 shrink-0"></i>
             <span>{{ errorMessage() }}</span>
           </div>
         }
 
         <!-- Email -->
         <div class="flex flex-col gap-1.5">
-          <label for="email" class="text-sm font-medium text-surface-700"> Email address </label>
+          <label class="text-sm font-medium text-surface-700" for="email">
+            {{ t('form.email.label') }}
+          </label>
           <input
-            pInputText
-            id="email"
-            type="email"
-            formControlName="email"
-            placeholder="you@company.com"
-            autocomplete="email"
             [attr.aria-describedby]="emailInvalid ? 'email-error' : null"
             [attr.aria-invalid]="emailInvalid || null"
             [class]="emailInvalid ? 'ng-invalid ng-dirty w-full' : 'w-full'"
+            [placeholder]="t('form.email.placeholder')"
+            autocomplete="email"
+            formControlName="email"
+            id="email"
+            pInputText
+            type="email"
           />
           @if (emailInvalid) {
             <small
-              id="email-error"
               class="flex items-center gap-1 text-xs text-red-500"
+              id="email-error"
               role="alert"
             >
-              <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+              <i aria-hidden="true" class="pi pi-exclamation-circle"></i>
               {{ emailError }}
             </small>
           }
@@ -152,26 +166,28 @@
 
         <!-- Password -->
         <div class="flex flex-col gap-1.5">
-          <label for="password" class="text-sm font-medium text-surface-700"> Password </label>
+          <label class="text-sm font-medium text-surface-700" for="password">
+            {{ t('form.password.label') }}
+          </label>
           <p-password
-            inputId="password"
-            formControlName="password"
-            placeholder="••••••••"
-            autocomplete="current-password"
-            [feedback]="false"
-            [toggleMask]="true"
-            class="w-full"
-            inputStyleClass="w-full"
             [attr.aria-describedby]="passwordInvalid ? 'password-error' : null"
             [attr.aria-invalid]="passwordInvalid || null"
+            [feedback]="false"
+            [toggleMask]="true"
+            autocomplete="current-password"
+            class="w-full"
+            formControlName="password"
+            inputId="password"
+            inputStyleClass="w-full"
+            placeholder="••••••••"
           />
           @if (passwordInvalid) {
             <small
-              id="password-error"
               class="flex items-center gap-1 text-xs text-red-500"
+              id="password-error"
               role="alert"
             >
-              <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+              <i aria-hidden="true" class="pi pi-exclamation-circle"></i>
               {{ passwordError }}
             </small>
           }
@@ -179,19 +195,19 @@
 
         <!-- Submit -->
         <p-button
-          type="submit"
-          label="Sign in"
+          [attr.aria-label]="t('form.submit')"
+          [disabled]="isLoading()"
+          [label]="t('form.submit')"
+          [loading]="isLoading()"
           icon="pi pi-sign-in"
           styleClass="w-full"
-          [loading]="isLoading()"
-          [disabled]="isLoading()"
-          aria-label="Sign in to your account"
+          type="submit"
         />
       </form>
 
       <!-- Footer note -->
       <p class="mt-8 text-center text-xs text-surface-400">
-        Having trouble signing in? Contact your administrator.
+        {{ t('form.help') }}
       </p>
     </div>
   </main>

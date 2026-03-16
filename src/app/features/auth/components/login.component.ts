@@ -7,35 +7,27 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 
+import { TranslocoModule, TranslocoService, TRANSLOCO_SCOPE } from '@jsverse/transloco';
+
 import { AuthService } from '../services';
 import { ToastService } from '@/app/core/services';
 import { ErrorResponse, ERROR_CODES } from '@/app/shared/models/api';
 
-interface BrandingFeature {
-  icon: string;
-  label: string;
-}
-
 @Component({
   selector: 'app-login',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule],
+  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule, TranslocoModule],
   templateUrl: './login.component.html',
+  providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'auth' }],
 })
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly transloco = inject(TranslocoService);
 
   protected readonly currentYear = new Date().getFullYear();
-
-  protected readonly brandingFeatures: BrandingFeature[] = [
-    { icon: 'pi pi-shield', label: 'OFAC, World Bank & ICIJ watchlist checks' },
-    { icon: 'pi pi-bolt', label: 'Real-time screening results in seconds' },
-    { icon: 'pi pi-history', label: 'Full screening history per supplier' },
-    { icon: 'pi pi-lock', label: 'Secure, audit-ready compliance records' },
-  ];
 
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
@@ -58,7 +50,10 @@ export class LoginComponent {
 
     this.authService.signIn({ email: email!, password: password! }).subscribe({
       next: () => {
-        this.toast.success('Welcome back!', 'Sign in successful');
+        this.toast.success(
+          this.transloco.translate('auth.toast.success_title'),
+          this.transloco.translate('auth.toast.success_detail'),
+        );
         this.router.navigate(['/suppliers']).then();
       },
       error: (err: HttpErrorResponse) => {
@@ -73,19 +68,15 @@ export class LoginComponent {
 
     switch (apiError?.errorCode) {
       case ERROR_CODES.INVALID_CREDENTIALS:
-        this.errorMessage.set('Invalid email or password. Please try again.');
+        this.errorMessage.set(this.transloco.translate('auth.errors.invalid_credentials'));
         break;
       case ERROR_CODES.ACCOUNT_LOCKED:
-        this.errorMessage.set(
-          'Your account is locked due to too many failed attempts. Please contact support.',
-        );
+        this.errorMessage.set(this.transloco.translate('auth.errors.account_locked'));
         break;
       default:
-        this.errorMessage.set('An unexpected error occurred. Please try again later.');
+        this.errorMessage.set(this.transloco.translate('auth.errors.unexpected'));
     }
   }
-
-  // ─── Field helpers ──────────────────────────────────────────────
 
   protected get emailInvalid(): boolean {
     const ctrl = this.form.controls.email;
@@ -99,14 +90,14 @@ export class LoginComponent {
 
   protected get emailError(): string {
     const ctrl = this.form.controls.email;
-    if (ctrl.hasError('required')) return 'Email is required.';
-    if (ctrl.hasError('email')) return 'Invalid email format.';
+    if (ctrl.hasError('required')) return this.transloco.translate('auth.form.email.errors.required');
+    if (ctrl.hasError('email')) return this.transloco.translate('auth.form.email.errors.email');
     return '';
   }
 
   protected get passwordError(): string {
     const ctrl = this.form.controls.password;
-    if (ctrl.hasError('required')) return 'Password is required.';
+    if (ctrl.hasError('required')) return this.transloco.translate('auth.form.password.errors.required');
     return '';
   }
 }
