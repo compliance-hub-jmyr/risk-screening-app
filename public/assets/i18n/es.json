@@ -19,8 +19,9 @@
     "reset": "Restablecer",
     "loading": "Cargando...",
     "noResults": "No se encontraron resultados",
-    "required": "Obligatorio",
-    "optional": "Opcional"
+    "required": "Requerido",
+    "optional": "Opcional",
+    "characters": "caracteres"
   },
   "navigation": {
     "suppliers": "Proveedores",
@@ -36,9 +37,39 @@
     "listTitle": "Proveedores",
     "listSubtitle": "Gestiona y evalúa tus proveedores",
     "addSupplier": "Añadir Proveedor",
+    "supplierCount": "{{count}} proveedor encontrado",
+    "suppliersCount": "{{count}} proveedores encontrados",
+    "pageReport": "Mostrando {first}–{last} de {totalRecords}",
     "editSupplier": "Editar Proveedor",
     "supplierDetails": "Detalles del Proveedor",
     "searchPlaceholder": "Buscar proveedores por nombre, ID o email...",
+    "filters": {
+      "filterSuppliers": "Filtrar Proveedores",
+      "searchByName": "Buscar por nombre...",
+      "exactMatch": "Coincidencia exacta",
+      "searchCountry": "Buscar país...",
+      "filterByCountry": "Filtrar por país",
+      "filterByStatus": "Filtrar por estado",
+      "filterByRiskLevel": "Filtrar por nivel de riesgo",
+      "clearAllFilters": "Limpiar todos los filtros",
+      "clearFilters": "Limpiar filtros",
+      "allCountries": "Todos los países",
+      "allStatuses": "Todos los estados",
+      "allRiskLevels": "Todos los niveles de riesgo"
+    },
+    "emptyState": {
+      "noSuppliersFound": "No se encontraron proveedores",
+      "tryAdjustingFilters": "Intenta ajustar tus filtros o",
+      "clearFilters": "limpiar filtros",
+      "addFirstSupplier": "Añade tu primer proveedor para comenzar."
+    },
+    "menu": {
+      "viewDetails": "Ver detalles",
+      "edit": "Editar",
+      "runScreening": "Ejecutar evaluación",
+      "delete": "Eliminar",
+      "optionsFor": "Opciones para {{name}}"
+    },
     "form": {
       "legalName": "Razón Social",
       "legalNamePlaceholder": "Ingrese la razón social",
@@ -60,7 +91,18 @@
       "annualRevenuePlaceholder": "Ingrese facturación anual en dólares",
       "lastEdited": "Fecha de Última Edición",
       "status": "Estado",
-      "riskLevel": "Nivel de Riesgo"
+      "riskLevel": "Nivel de Riesgo",
+      "notes": "Notas",
+      "notesPlaceholder": "Observaciones adicionales…",
+      "requiredFields": "Información requerida",
+      "optionalDetails": "Detalles opcionales",
+      "create": "Crear proveedor",
+      "save": "Guardar cambios",
+      "taxIdHint": "Exactamente 11 dígitos numéricos (ej. RUC: 20123456789)",
+      "phoneHint": "+ opcional, dígitos, espacios, guiones o paréntesis. 7–20 caracteres.",
+      "websiteHint": "Debe comenzar con http:// o https://",
+      "billingHint": "No negativo, hasta 2 decimales (ej. $1,250,000.00)",
+      "searchCountry": "Buscar país…"
     },
     "columns": {
       "legalName": "Razón Social",
@@ -95,11 +137,13 @@
       "low": "Riesgo Bajo",
       "medium": "Riesgo Medio",
       "high": "Riesgo Alto",
-      "critical": "Riesgo Crítico"
+      "critical": "Riesgo Crítico",
+      "none": "Sin Riesgo"
     },
     "screening": {
       "title": "Evaluación de Riesgo",
       "newScreening": "Nueva Evaluación",
+      "dialogHeader": "Evaluación — {{name}}",
       "screeningResults": "Resultados de Evaluación",
       "sources": "Fuentes de Evaluación",
       "lastScreening": "Última Evaluación",
@@ -150,18 +194,83 @@
       "icijDescription": "Base de datos internacional de entidades offshore"
     },
     "validation": {
-      "legalNameRequired": "La razón social es obligatoria",
-      "taxIdRequired": "La identificación tributaria es obligatoria",
-      "taxIdInvalid": "El ID tributario debe tener 11 dígitos",
-      "emailInvalid": "Por favor ingrese un email válido",
-      "phoneInvalid": "Por favor ingrese un número telefónico válido",
-      "websiteInvalid": "Por favor ingrese una URL válida",
-      "countryRequired": "La selección de país es obligatoria",
-      "annualRevenueInvalid": "Por favor ingrese una facturación válida"
+      "legalNameRequired": "Se requiere la razón social",
+      "taxIdRequired": "Se requiere la identificación tributaria",
+      "taxIdInvalid": "La ID tributaria debe tener 11 dígitos",
+      "emailInvalid": "Ingrese una dirección de correo válida",
+      "phoneInvalid": "Ingrese un número telefónico válido",
+      "websiteInvalid": "Ingrese una URL válida",
+      "required": "Este campo es requerido.",
+      "taxIdFormat": "Debe ser exactamente 11 dígitos numéricos (sin espacios o guiones).",
+      "emailFormat": "Ingrese una dirección de correo válida (ej. contacto@ejemplo.com).",
+      "phoneFormat": "Ingrese un número telefónico válido. Use dígitos, espacios, guiones, paréntesis o un + inicial. Entre 7 y 20 caracteres (ej. +1 555 000 0000).",
+      "urlFormat": "Ingrese una URL válida que inicie con http:// o https:// (ej. https://ejemplo.com).",
+      "minAmount": "El monto debe ser 0 o mayor.",
+      "decimalPlaces": "El monto debe tener máximo 2 decimales.",
+      "maxLength": "No debe exceder {{max}} caracteres.",
+      "correctFields": "Por favor corrige los campos resaltados.",
+      "taxIdExists": "Esta Identificación Tributaria ya está registrada.",
+      "invalidTaxId": "Debe ser exactamente 11 dígitos numéricos.",
+      "invalidLegalName": "Razón social inválida.",
+      "invalidCommercialName": "Nombre comercial inválido.",
+      "invalidCountry": "Código de país inválido.",
+      "invalidPhone": "Debe ser un número telefónico válido (ej. +1 555 000 0000).",
+      "invalidWebsite": "Debe ser una URL HTTP o HTTPS válida (ej. https://ejemplo.com).",
+      "invalidBilling": "Debe ser un monto no negativo con máximo 2 decimales.",
+      "invalidAddress": "Dirección inválida.",
+      "unexpectedError": "Ocurrió un error inesperado. Por favor intenta nuevamente.",
+      "serverError": "Ocurrió un error en el servidor. Por favor intenta más tarde."
     },
-    "noResults": "No se encontraron proveedores",
-    "loading": "Cargando proveedores...",
-    "totalSuppliers": "{{count}} proveedor encontrado",
-    "totalSuppliers_plural": "{{count}} proveedores encontrados"
+    "messages": {
+      "supplierUpdated": "Proveedor actualizado",
+      "supplierCreated": "Proveedor creado",
+      "supplierDeleted": "Proveedor eliminado"
+    },
+    "dialogs": {
+      "newSupplier": "Nuevo Proveedor",
+      "editSupplier": "Editar Proveedor",
+      "deleteSupplier": "Eliminar Proveedor",
+      "delete": {
+        "title": "¿Eliminar proveedor?",
+        "warning": "El proveedor {{name}} y todos sus datos asociados serán eliminados permanentemente.",
+        "typeNamePrompt": "Escriba la razón social del proveedor para confirmar:",
+        "exactMatch": "Escribe exactamente el nombre mostrado arriba.",
+        "deleteButton": "Eliminar proveedor",
+        "cannotUndo": "Esta acción no se puede deshacer.",
+        "deleteWarning": "El proveedor {{name}} y todos sus datos asociados serán eliminados permanentemente.",
+        "typeToConfirm": "Escribe \"{{name}}\" para confirmar:",
+        "cancel": "Cancelar",
+        "confirmDelete": "Confirmar eliminación",
+        "deleting": "Eliminando...",
+        "deleteSupplier": "Eliminar proveedor"
+      }
+    },
+    "details": {
+      "sections": {
+        "identification": "Identificación",
+        "contact": "Contacto",
+        "financial": "Financiero",
+        "notes": "Notas",
+        "audit": "Auditoría"
+      },
+      "fields": {
+        "taxId": "ID Tributario",
+        "country": "País",
+        "email": "Correo Electrónico",
+        "phone": "Teléfono",
+        "website": "Sitio Web",
+        "address": "Dirección",
+        "annualBilling": "Facturación anual (USD)",
+        "created": "Creado",
+        "lastUpdated": "Última actualización"
+      },
+      "status": {
+        "approved": "Aprobado",
+        "pending": "Pendiente",
+        "rejected": "Rechazado",
+        "underReview": "En Revisión"
+      },
+      "close": "Cerrar"
+    }
   }
 }

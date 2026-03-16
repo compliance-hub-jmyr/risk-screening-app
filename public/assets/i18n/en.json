@@ -20,7 +20,8 @@
     "loading": "Loading...",
     "noResults": "No results found",
     "required": "Required",
-    "optional": "Optional"
+    "optional": "Optional",
+    "characters": "characters"
   },
   "navigation": {
     "suppliers": "Suppliers",
@@ -36,9 +37,39 @@
     "listTitle": "Suppliers",
     "listSubtitle": "Manage and screen your suppliers",
     "addSupplier": "Add Supplier",
+    "supplierCount": "{{count}} supplier found",
+    "suppliersCount": "{{count}} suppliers found",
+    "pageReport": "Showing {first}–{last} of {totalRecords}",
     "editSupplier": "Edit Supplier",
     "supplierDetails": "Supplier Details",
     "searchPlaceholder": "Search suppliers by name, ID, or email...",
+    "filters": {
+      "filterSuppliers": "Filter Suppliers",
+      "searchByName": "Search by name...",
+      "exactMatch": "Exact match",
+      "searchCountry": "Search country...",
+      "filterByCountry": "Filter by country",
+      "filterByStatus": "Filter by status",
+      "filterByRiskLevel": "Filter by risk level",
+      "clearAllFilters": "Clear all filters",
+      "clearFilters": "Clear filters",
+      "allCountries": "All countries",
+      "allStatuses": "All statuses",
+      "allRiskLevels": "All risk levels"
+    },
+    "emptyState": {
+      "noSuppliersFound": "No suppliers found",
+      "tryAdjustingFilters": "Try adjusting your filters or",
+      "clearFilters": "clear filters",
+      "addFirstSupplier": "Add your first supplier to get started."
+    },
+    "menu": {
+      "viewDetails": "View details",
+      "edit": "Edit",
+      "runScreening": "Run screening",
+      "delete": "Delete",
+      "optionsFor": "Options for {{name}}"
+    },
     "form": {
       "legalName": "Legal Name",
       "legalNamePlaceholder": "Enter legal business name",
@@ -60,7 +91,18 @@
       "annualRevenuePlaceholder": "Enter annual revenue in dollars",
       "lastEdited": "Last Edited",
       "status": "Status",
-      "riskLevel": "Risk Level"
+      "riskLevel": "Risk Level",
+      "notes": "Notes",
+      "notesPlaceholder": "Additional observations…",
+      "requiredFields": "Required information",
+      "optionalDetails": "Optional details",
+      "create": "Create supplier",
+      "save": "Save changes",
+      "taxIdHint": "Exactly 11 numeric digits (e.g. RUC: 20123456789)",
+      "phoneHint": "Optional leading +, digits, spaces, dashes or parentheses. 7–20 characters.",
+      "websiteHint": "Must start with http:// or https://",
+      "billingHint": "Non-negative, up to 2 decimal places (e.g. $1,250,000.00)",
+      "searchCountry": "Search country…"
     },
     "columns": {
       "legalName": "Legal Name",
@@ -95,11 +137,13 @@
       "low": "Low Risk",
       "medium": "Medium Risk",
       "high": "High Risk",
-      "critical": "Critical Risk"
+      "critical": "Critical Risk",
+      "none": "No Risk"
     },
     "screening": {
       "title": "Risk Screening",
       "newScreening": "New Screening",
+      "dialogHeader": "Screening — {{name}}",
       "screeningResults": "Screening Results",
       "sources": "Screening Sources",
       "lastScreening": "Last Screening",
@@ -155,13 +199,78 @@
       "taxIdInvalid": "Tax ID must be 11 digits",
       "emailInvalid": "Please enter a valid email address",
       "phoneInvalid": "Please enter a valid phone number",
-      "websiteInvalid": "Please enter a valid website URL",
-      "countryRequired": "Country selection is required",
-      "annualRevenueInvalid": "Please enter a valid revenue amount"
+      "websiteInvalid": "Please enter a valid URL",
+      "required": "This field is required.",
+      "taxIdFormat": "Must be exactly 11 numeric digits (no spaces or dashes).",
+      "emailFormat": "Enter a valid email address (e.g. contact@example.com).",
+      "phoneFormat": "Enter a valid phone number. Use digits, spaces, dashes, parentheses or a leading +. Between 7 and 20 characters (e.g. +1 555 000 0000).",
+      "urlFormat": "Enter a valid URL starting with http:// or https:// (e.g. https://example.com).",
+      "minAmount": "Amount must be 0 or greater.",
+      "decimalPlaces": "Amount must have at most 2 decimal places.",
+      "maxLength": "Must not exceed {{max}} characters.",
+      "correctFields": "Please correct the highlighted fields.",
+      "taxIdExists": "This Tax ID is already registered.",
+      "invalidTaxId": "Must be exactly 11 numeric digits.",
+      "invalidLegalName": "Invalid legal name.",
+      "invalidCommercialName": "Invalid commercial name.",
+      "invalidCountry": "Invalid country code.",
+      "invalidPhone": "Must be a valid phone number (e.g. +1 555 000 0000).",
+      "invalidWebsite": "Must be a valid HTTP or HTTPS URL (e.g. https://example.com).",
+      "invalidBilling": "Must be a non-negative amount with at most 2 decimal places.",
+      "invalidAddress": "Invalid address.",
+      "unexpectedError": "An unexpected error occurred. Please try again.",
+      "serverError": "A server error occurred. Please try again later."
     },
-    "noResults": "No suppliers found",
-    "loading": "Loading suppliers...",
-    "totalSuppliers": "{{count}} supplier found",
-    "totalSuppliers_plural": "{{count}} suppliers found"
+    "messages": {
+      "supplierUpdated": "Supplier updated",
+      "supplierCreated": "Supplier created",
+      "supplierDeleted": "Supplier deleted"
+    },
+    "dialogs": {
+      "newSupplier": "New Supplier",
+      "editSupplier": "Edit Supplier",
+      "deleteSupplier": "Delete Supplier",
+      "delete": {
+        "title": "Delete supplier?",
+        "warning": "The supplier {{name}} and all associated data will be permanently deleted.",
+        "typeNamePrompt": "Type the supplier's legal name to confirm:",
+        "exactMatch": "Type the exact name shown above.",
+        "deleteButton": "Delete supplier",
+        "cannotUndo": "This action cannot be undone.",
+        "deleteWarning": "The supplier {{name}} and all associated data will be permanently deleted.",
+        "typeToConfirm": "Type \"{{name}}\" to confirm:",
+        "cancel": "Cancel",
+        "confirmDelete": "Confirm delete",
+        "deleting": "Deleting...",
+        "deleteSupplier": "Delete supplier"
+      }
+    },
+    "details": {
+      "sections": {
+        "identification": "Identification",
+        "contact": "Contact",
+        "financial": "Financial",
+        "notes": "Notes",
+        "audit": "Audit"
+      },
+      "fields": {
+        "taxId": "Tax ID",
+        "country": "Country",
+        "email": "Email",
+        "phone": "Phone",
+        "website": "Website",
+        "address": "Address",
+        "annualBilling": "Annual billing (USD)",
+        "created": "Created",
+        "lastUpdated": "Last updated"
+      },
+      "status": {
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected",
+        "underReview": "Under Review"
+      },
+      "close": "Close"
+    }
   }
 }
