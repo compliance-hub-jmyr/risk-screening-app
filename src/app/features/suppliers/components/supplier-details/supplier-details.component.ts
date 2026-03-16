@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 import { RiskLevel, SupplierResponse, SupplierStatus } from '../../models';
 import { COUNTRIES, CountryOption } from '@/app/shared/data/countries.data';
@@ -9,10 +10,12 @@ import { COUNTRIES, CountryOption } from '@/app/shared/data/countries.data';
 @Component({
   selector: 'app-supplier-details',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, DecimalPipe, ButtonModule, TagModule],
+  imports: [DatePipe, DecimalPipe, ButtonModule, TagModule, TranslocoModule],
   templateUrl: './supplier-details.component.html',
 })
 export class SupplierDetailsComponent {
+  private readonly translocoService = inject(TranslocoService);
+
   readonly supplier = input.required<SupplierResponse>();
   readonly closed = output<void>();
 
@@ -40,10 +43,10 @@ export class SupplierDetailsComponent {
 
   protected statusLabel(status: SupplierStatus): string {
     const map: Record<SupplierStatus, string> = {
-      Approved: 'Approved',
-      Pending: 'Pending',
-      Rejected: 'Rejected',
-      UnderReview: 'Under Review',
+      Approved: this.translocoService.translate('suppliers.details.status.approved'),
+      Pending: this.translocoService.translate('suppliers.details.status.pending'),
+      Rejected: this.translocoService.translate('suppliers.details.status.rejected'),
+      UnderReview: this.translocoService.translate('suppliers.details.status.underReview'),
     };
     return map[status];
   }
@@ -54,6 +57,16 @@ export class SupplierDetailsComponent {
       Low: 'success',
       Medium: 'warn',
       High: 'danger',
+    };
+    return map[risk];
+  }
+
+  protected riskLabel(risk: RiskLevel): string {
+    const map: Record<RiskLevel, string> = {
+      None: this.translocoService.translate('suppliers.riskLevel.none'),
+      Low: this.translocoService.translate('suppliers.riskLevel.low'),
+      Medium: this.translocoService.translate('suppliers.riskLevel.medium'),
+      High: this.translocoService.translate('suppliers.riskLevel.high'),
     };
     return map[risk];
   }

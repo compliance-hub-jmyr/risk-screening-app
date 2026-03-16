@@ -14,49 +14,58 @@
         [severity]="statusSeverity(supplier().status)"
         [value]="statusLabel(supplier().status)"
       />
-      <p-tag [severity]="riskSeverity(supplier().riskLevel)" [value]="supplier().riskLevel"/>
+      <p-tag
+        [severity]="riskSeverity(supplier().riskLevel)"
+        [value]="riskLabel(supplier().riskLevel)"
+      />
     </div>
   </div>
 
   <!-- Section: Identification -->
-  <section aria-labelledby="section-identification">
+  <section [attr.aria-labelledby]="'section-identification'">
     <h3
       id="section-identification"
       class="mb-3 text-xs font-semibold uppercase tracking-wider text-surface-400"
     >
-      Identification
+      {{ 'suppliers.details.sections.identification' | transloco }}
     </h3>
     <dl class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
       <div>
-        <dt class="text-xs font-medium text-surface-500">Tax ID</dt>
+        <dt class="text-xs font-medium text-surface-500">
+          {{ 'suppliers.details.fields.taxId' | transloco }}
+        </dt>
         <dd class="mt-0.5 font-mono text-sm text-surface-800">{{ supplier().taxId }}</dd>
       </div>
       <div>
-        <dt class="text-xs font-medium text-surface-500">Country</dt>
+        <dt class="text-xs font-medium text-surface-500">
+          {{ 'suppliers.details.fields.country' | transloco }}
+        </dt>
         <dd class="mt-0.5 text-sm text-surface-800">{{ countryLabel() }}</dd>
       </div>
     </dl>
   </section>
 
-  <hr class="border-surface-100"/>
+  <hr class="border-surface-100" />
 
   <!-- Section: Contact -->
-  <section aria-labelledby="section-contact">
+  <section [attr.aria-labelledby]="'section-contact'">
     <h3
       id="section-contact"
       class="mb-3 text-xs font-semibold uppercase tracking-wider text-surface-400"
     >
-      Contact
+      {{ 'suppliers.details.sections.contact' | transloco }}
     </h3>
     <dl class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
       <div>
-        <dt class="text-xs font-medium text-surface-500">Email</dt>
+        <dt class="text-xs font-medium text-surface-500">
+          {{ 'suppliers.details.fields.email' | transloco }}
+        </dt>
         <dd class="mt-0.5 text-sm text-surface-800">
           @if (supplier().contactEmail) {
             <a
               [href]="'mailto:' + supplier().contactEmail"
               class="text-primary-600 hover:underline break-all"
-            >{{ supplier().contactEmail }}</a
+              >{{ supplier().contactEmail }}</a
             >
           } @else {
             <span class="text-surface-400">—</span>
@@ -64,19 +73,23 @@
         </dd>
       </div>
       <div>
-        <dt class="text-xs font-medium text-surface-500">Phone</dt>
+        <dt class="text-xs font-medium text-surface-500">
+          {{ 'suppliers.details.fields.phone' | transloco }}
+        </dt>
         <dd class="mt-0.5 text-sm text-surface-800">
           @if (supplier().contactPhone) {
             <a [href]="'tel:' + supplier().contactPhone" class="text-primary-600 hover:underline">{{
-                supplier().contactPhone
-              }}</a>
+              supplier().contactPhone
+            }}</a>
           } @else {
             <span class="text-surface-400">—</span>
           }
         </dd>
       </div>
       <div>
-        <dt class="text-xs font-medium text-surface-500">Website</dt>
+        <dt class="text-xs font-medium text-surface-500">
+          {{ 'suppliers.details.fields.website' | transloco }}
+        </dt>
         <dd class="mt-0.5 text-sm text-surface-800">
           @if (supplier().website) {
             <a
@@ -84,7 +97,7 @@
               target="_blank"
               rel="noopener noreferrer"
               class="text-primary-600 hover:underline break-all"
-            >{{ supplier().website }}</a
+              >{{ supplier().website }}</a
             >
           } @else {
             <span class="text-surface-400">—</span>
@@ -92,7 +105,9 @@
         </dd>
       </div>
       <div>
-        <dt class="text-xs font-medium text-surface-500">Address</dt>
+        <dt class="text-xs font-medium text-surface-500">
+          {{ 'suppliers.details.fields.address' | transloco }}
+        </dt>
         <dd class="mt-0.5 text-sm text-surface-800">
           @if (supplier().address) {
             {{ supplier().address }}
@@ -104,19 +119,21 @@
     </dl>
   </section>
 
-  <hr class="border-surface-100"/>
+  <hr class="border-surface-100" />
 
   <!-- Section: Financial -->
-  <section aria-labelledby="section-financial">
+  <section [attr.aria-labelledby]="'section-financial'">
     <h3
       id="section-financial"
       class="mb-3 text-xs font-semibold uppercase tracking-wider text-surface-400"
     >
-      Financial
+      {{ 'suppliers.details.sections.financial' | transloco }}
     </h3>
     <dl class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
       <div>
-        <dt class="text-xs font-medium text-surface-500">Annual billing (USD)</dt>
+        <dt class="text-xs font-medium text-surface-500">
+          {{ 'suppliers.details.fields.annualBilling' | transloco }}
+        </dt>
         <dd class="mt-0.5 text-sm text-surface-800">
           @if (supplier().annualBillingUsd !== null) {
             ${{ supplier().annualBillingUsd | number: '1.0-0' }}
@@ -129,39 +146,43 @@
   </section>
 
   @if (supplier().notes) {
-    <hr class="border-surface-100"/>
+    <hr class="border-surface-100" />
 
     <!-- Section: Notes -->
-    <section aria-labelledby="section-notes">
+    <section [attr.aria-labelledby]="'section-notes'">
       <h3
         id="section-notes"
         class="mb-3 text-xs font-semibold uppercase tracking-wider text-surface-400"
       >
-        Notes
+        {{ 'suppliers.details.sections.notes' | transloco }}
       </h3>
       <p class="whitespace-pre-wrap text-sm text-surface-700">{{ supplier().notes }}</p>
     </section>
   }
 
-  <hr class="border-surface-100"/>
+  <hr class="border-surface-100" />
 
   <!-- Section: Audit -->
-  <section aria-labelledby="section-audit">
+  <section [attr.aria-labelledby]="'section-audit'">
     <h3
       id="section-audit"
       class="mb-3 text-xs font-semibold uppercase tracking-wider text-surface-400"
     >
-      Audit
+      {{ 'suppliers.details.sections.audit' | transloco }}
     </h3>
     <dl class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
       <div>
-        <dt class="text-xs font-medium text-surface-500">Created</dt>
+        <dt class="text-xs font-medium text-surface-500">
+          {{ 'suppliers.details.fields.created' | transloco }}
+        </dt>
         <dd class="mt-0.5 text-sm text-surface-800">
           {{ supplier().createdAt | date: 'MMM d, y · h:mm a' }}
         </dd>
       </div>
       <div>
-        <dt class="text-xs font-medium text-surface-500">Last updated</dt>
+        <dt class="text-xs font-medium text-surface-500">
+          {{ 'suppliers.details.fields.lastUpdated' | transloco }}
+        </dt>
         <dd class="mt-0.5 text-sm text-surface-800">
           {{ supplier().updatedAt | date: 'MMM d, y · h:mm a' }}
         </dd>
@@ -177,7 +198,7 @@
       class="p-button-outlined p-button-secondary"
       (click)="closed.emit()"
     >
-      <span pButtonLabel>Close</span>
+      <span pButtonLabel>{{ 'suppliers.details.close' | transloco }}</span>
     </button>
   </div>
 </div>
