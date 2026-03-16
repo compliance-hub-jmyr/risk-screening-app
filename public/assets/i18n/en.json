@@ -23,6 +23,14 @@
     "optional": "Optional",
     "characters": "characters"
   },
+  "errors": {
+    "sessionExpired": "Your session has expired. Please log in again.",
+    "noPermission": "You do not have permission to perform this action.",
+    "rateLimitExceeded": "Too many requests. Please wait a moment and try again.",
+    "serverError": "A server error occurred. Please try again later.",
+    "unexpected": "An unexpected error occurred.",
+    "noConnection": "Unable to connect to the server. Please check your internet connection."
+  },
   "navigation": {
     "suppliers": "Suppliers",
     "dashboard": "Dashboard",

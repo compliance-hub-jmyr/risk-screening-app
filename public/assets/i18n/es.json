@@ -23,6 +23,14 @@
     "optional": "Opcional",
     "characters": "caracteres"
   },
+  "errors": {
+    "sessionExpired": "Tu sesión ha expirado. Por favor inicia sesión nuevamente.",
+    "noPermission": "No tienes permisos para realizar esta acción.",
+    "rateLimitExceeded": "Demasiadas solicitudes. Por favor espera un momento e intenta nuevamente.",
+    "serverError": "Ocurrió un error en el servidor. Por favor intenta más tarde.",
+    "unexpected": "Ocurrió un error inesperado.",
+    "noConnection": "No se puede conectar al servidor. Verifica tu conexión a internet."
+  },
   "navigation": {
     "suppliers": "Proveedores",
     "dashboard": "Panel de Control",
