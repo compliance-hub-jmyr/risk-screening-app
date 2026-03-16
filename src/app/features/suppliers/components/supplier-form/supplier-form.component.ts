@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
   input,
   OnInit,
@@ -24,6 +23,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { MessageModule } from 'primeng/message';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 import { SupplierService } from '../../services';
 import { CreateSupplierRequest, SupplierResponse, UpdateSupplierRequest } from '../../models';
@@ -124,6 +124,7 @@ const FIELD_MAP: Record<string, string> = {
     SelectModule,
     TextareaModule,
     MessageModule,
+    TranslocoModule,
   ],
   templateUrl: './supplier-form.component.html',
 })
@@ -136,9 +137,6 @@ export class SupplierFormComponent implements OnInit {
   // State
   protected readonly submitting = signal(false);
   protected readonly serverError = signal<string | null>(null);
-  protected readonly submitLabel = computed(() =>
-    this.mode() === 'create' ? 'Create supplier' : 'Save changes',
-  );
   // Form
   protected readonly form = new FormGroup({
     // Required
@@ -186,6 +184,7 @@ export class SupplierFormComponent implements OnInit {
   protected readonly ADDRESS_MAX = 500;
   private readonly supplierService = inject(SupplierService);
   private readonly toastService = inject(ToastService);
+  private readonly translocoService = inject(TranslocoService);
 
   // Lifecycle
   ngOnInit(): void {
@@ -224,23 +223,7 @@ export class SupplierFormComponent implements OnInit {
         next: (supplier) => {
           this.submitting.set(false);
           this.toastService.success(
-            `${supplier.legalName} has been updated successfully.`,
-            'Supplier updated',
-          );
-          this.saved.emit(supplier);
-        },
-        error: (err: HttpErrorResponse) => {
-          this.submitting.set(false);
-          this.handleServerError(err);
-        },
-      });
-    } else {
-      this.supplierService.create(payload).subscribe({
-        next: (supplier) => {
-          this.submitting.set(false);
-          this.toastService.success(
-            `${supplier.legalName} has been added successfully.`,
-            'Supplier created',
+            this.translocoService.translate('suppliers.messages.supplierCreated'),
           );
           this.saved.emit(supplier);
         },
@@ -282,43 +265,50 @@ export class SupplierFormComponent implements OnInit {
     const c = this.form.controls[name];
     if (!c.touched) return '';
     if (c.hasError('serverError')) return c.getError('serverError') as string;
-    if (c.hasError('required') || c.hasError('whitespace')) return 'This field is required.';
+    if (c.hasError('required') || c.hasError('whitespace'))
+      return this.translocoService.translate('suppliers.validation.required');
 
     switch (name) {
       case 'legalName':
       case 'commercialName':
         if (c.hasError('maxlength'))
-          return `Must not exceed ${(c.getError('maxlength') as { requiredLength: number }).requiredLength} characters.`;
+          return this.translocoService.translate('suppliers.validation.maxLength', {
+            max: (c.getError('maxlength') as { requiredLength: number }).requiredLength,
+          });
         break;
 
       case 'taxId':
         if (c.hasError('taxIdFormat'))
-          return 'Must be exactly 11 numeric digits (no spaces or dashes).';
+          return this.translocoService.translate('suppliers.validation.taxIdFormat');
         break;
 
       case 'contactEmail':
-        if (c.hasError('email')) return 'Enter a valid email address (e.g. contact@example.com).';
+        if (c.hasError('email'))
+          return this.translocoService.translate('suppliers.validation.emailFormat');
         break;
 
       case 'contactPhone':
         if (c.hasError('phoneFormat'))
-          return 'Enter a valid phone number. Use digits, spaces, dashes, parentheses or a leading +. Between 7 and 20 characters (e.g. +1 555 000 0000).';
+          return this.translocoService.translate('suppliers.validation.phoneFormat');
         break;
 
       case 'website':
         if (c.hasError('urlFormat'))
-          return 'Enter a valid URL starting with http:// or https:// (e.g. https://example.com).';
+          return this.translocoService.translate('suppliers.validation.urlFormat');
         break;
 
       case 'annualBillingUsd':
-        if (c.hasError('min')) return 'Amount must be 0 or greater.';
+        if (c.hasError('min'))
+          return this.translocoService.translate('suppliers.validation.minAmount');
         if (c.hasError('annualBillingDecimals'))
-          return 'Amount must have at most 2 decimal places.';
+          return this.translocoService.translate('suppliers.validation.decimalPlaces');
         break;
 
       case 'address':
         if (c.hasError('maxlength'))
-          return `Must not exceed ${(c.getError('maxlength') as { requiredLength: number }).requiredLength} characters.`;
+          return this.translocoService.translate('suppliers.validation.maxLength', {
+            max: (c.getError('maxlength') as { requiredLength: number }).requiredLength,
+          });
         break;
     }
 
@@ -346,70 +336,79 @@ export class SupplierFormComponent implements OnInit {
           control.markAsTouched();
         }
       }
-      this.serverError.set('Please correct the highlighted fields.');
+      this.serverError.set(this.translocoService.translate('suppliers.validation.correctFields'));
       return;
     }
 
     // Map specific error codes to targeted field errors or banner messages
     switch (code) {
       case ERROR_CODES.SUPPLIER_TAX_ID_ALREADY_EXISTS:
-        this.form.controls.taxId.setErrors({ serverError: 'This Tax ID is already registered.' });
+        this.form.controls.taxId.setErrors({
+          serverError: this.translocoService.translate('suppliers.validation.taxIdExists'),
+        });
         this.form.controls.taxId.markAsTouched();
-        this.serverError.set('A supplier with this Tax ID already exists.');
+        this.serverError.set(this.translocoService.translate('suppliers.validation.taxIdExists'));
         break;
       case ERROR_CODES.INVALID_TAX_ID:
         this.form.controls.taxId.setErrors({
-          serverError: 'Must be exactly 11 numeric digits.',
+          serverError: this.translocoService.translate('suppliers.validation.invalidTaxId'),
         });
         this.form.controls.taxId.markAsTouched();
         break;
       case ERROR_CODES.INVALID_LEGAL_NAME:
         this.form.controls.legalName.setErrors({
-          serverError: body?.message ?? 'Invalid legal name.',
+          serverError:
+            body?.message ??
+            this.translocoService.translate('suppliers.validation.invalidLegalName'),
         });
         this.form.controls.legalName.markAsTouched();
         break;
       case ERROR_CODES.INVALID_COMMERCIAL_NAME:
         this.form.controls.commercialName.setErrors({
-          serverError: body?.message ?? 'Invalid commercial name.',
+          serverError:
+            body?.message ??
+            this.translocoService.translate('suppliers.validation.invalidCommercialName'),
         });
         this.form.controls.commercialName.markAsTouched();
         break;
       case ERROR_CODES.INVALID_COUNTRY_CODE:
         this.form.controls.country.setErrors({
-          serverError: body?.message ?? 'Invalid country code.',
+          serverError:
+            body?.message ?? this.translocoService.translate('suppliers.validation.invalidCountry'),
         });
         this.form.controls.country.markAsTouched();
         break;
       case ERROR_CODES.INVALID_PHONE_NUMBER:
         this.form.controls.contactPhone.setErrors({
-          serverError: 'Must be a valid phone number (e.g. +1 555 000 0000).',
+          serverError: this.translocoService.translate('suppliers.validation.invalidPhone'),
         });
         this.form.controls.contactPhone.markAsTouched();
         break;
       case ERROR_CODES.INVALID_WEBSITE_URL:
         this.form.controls.website.setErrors({
-          serverError: 'Must be a valid HTTP or HTTPS URL (e.g. https://example.com).',
+          serverError: this.translocoService.translate('suppliers.validation.invalidWebsite'),
         });
         this.form.controls.website.markAsTouched();
         break;
       case ERROR_CODES.INVALID_ANNUAL_BILLING:
         this.form.controls.annualBillingUsd.setErrors({
-          serverError: 'Must be a non-negative amount with at most 2 decimal places.',
+          serverError: this.translocoService.translate('suppliers.validation.invalidBilling'),
         });
         this.form.controls.annualBillingUsd.markAsTouched();
         break;
       case ERROR_CODES.INVALID_SUPPLIER_ADDRESS:
         this.form.controls.address.setErrors({
-          serverError: body?.message ?? 'Invalid address.',
+          serverError:
+            body?.message ?? this.translocoService.translate('suppliers.validation.invalidAddress'),
         });
         this.form.controls.address.markAsTouched();
         break;
       default:
         this.serverError.set(
           err.status >= 500
-            ? 'A server error occurred. Please try again later.'
-            : (body?.message ?? 'An unexpected error occurred. Please try again.'),
+            ? this.translocoService.translate('suppliers.validation.serverError')
+            : (body?.message ??
+                this.translocoService.translate('suppliers.validation.unexpectedError')),
         );
     }
   }
