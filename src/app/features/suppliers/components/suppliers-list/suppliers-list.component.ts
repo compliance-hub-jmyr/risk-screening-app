@@ -9,7 +9,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -22,6 +22,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { Menu, MenuModule } from 'primeng/menu';
 import { DialogModule } from 'primeng/dialog';
 import { MenuItem } from 'primeng/api';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 import { SupplierService } from '../../services';
 import {
@@ -61,6 +62,7 @@ interface SelectOption<T extends string> {
     InputIconModule,
     MenuModule,
     DialogModule,
+    TranslocoModule,
     SupplierFormComponent,
     ScreeningDialogComponent,
     DeleteConfirmDialogComponent,
@@ -71,6 +73,15 @@ interface SelectOption<T extends string> {
 })
 export class SuppliersListComponent {
   private readonly supplierService = inject(SupplierService);
+  private readonly translocoService = inject(TranslocoService);
+
+  // Track translations to recompute labels when the language changes
+  private readonly translationsLoaded = toSignal(
+    this.translocoService.langChanges$.pipe(
+      switchMap((lang) => this.translocoService.selectTranslation(lang)),
+    ),
+    { initialValue: {} },
+  );
 
   // Table state
   protected readonly suppliers = signal<SupplierResponse[]>([]);
@@ -109,26 +120,60 @@ export class SuppliersListComponent {
     initialValue: this.filterForm.value,
   });
 
-  protected readonly countryOptions: { label: string; value: string }[] = [
-    { label: 'All countries', value: '' },
-    ...COUNTRIES.map((c: CountryOption) => ({ label: `${c.name} (${c.code})`, value: c.code })),
-  ];
+  protected readonly countryOptions = computed(() => {
+    if (!Object.keys(this.translationsLoaded()).length) return [];
+    return [
+      { label: this.translocoService.translate('suppliers.filters.allCountries'), value: '' },
+      ...COUNTRIES.map((c: CountryOption) => ({ label: `${c.name} (${c.code})`, value: c.code })),
+    ];
+  });
 
-  protected readonly statusOptions: SelectOption<SupplierStatus>[] = [
-    { label: 'All statuses', value: '' },
-    { label: 'Pending', value: 'Pending' },
-    { label: 'Approved', value: 'Approved' },
-    { label: 'Rejected', value: 'Rejected' },
-    { label: 'Under Review', value: 'UnderReview' },
-  ];
+  protected readonly statusOptions = computed((): SelectOption<SupplierStatus>[] => {
+    if (!Object.keys(this.translationsLoaded()).length) return [];
+    return [
+      { label: this.translocoService.translate('suppliers.filters.allStatuses'), value: '' },
+      { label: this.translocoService.translate('suppliers.details.status.pending'), value: 'Pending' },
+      { label: this.translocoService.translate('suppliers.details.status.approved'), value: 'Approved' },
+      { label: this.translocoService.translate('suppliers.details.status.rejected'), value: 'Rejected' },
+      { label: this.translocoService.translate('suppliers.details.status.underReview'), value: 'UnderReview' },
+    ];
+  });
 
-  protected readonly riskOptions: SelectOption<RiskLevel>[] = [
-    { label: 'All risk levels', value: '' },
-    { label: 'None', value: 'None' },
-    { label: 'Low', value: 'Low' },
-    { label: 'Medium', value: 'Medium' },
-    { label: 'High', value: 'High' },
-  ];
+  protected readonly riskOptions = computed((): SelectOption<RiskLevel>[] => {
+    if (!Object.keys(this.translationsLoaded()).length) return [];
+    return [
+      { label: this.translocoService.translate('suppliers.filters.allRiskLevels'), value: '' },
+      { label: this.translocoService.translate('suppliers.riskLevel.none'), value: 'None' },
+      { label: this.translocoService.translate('suppliers.riskLevel.low'), value: 'Low' },
+      { label: this.translocoService.translate('suppliers.riskLevel.medium'), value: 'Medium' },
+      { label: this.translocoService.translate('suppliers.riskLevel.high'), value: 'High' },
+    ];
+  });
+
+  // Dialog headers
+  protected readonly newSupplierHeader = computed(() => {
+    if (!Object.keys(this.translationsLoaded()).length) return '';
+    return this.translocoService.translate('suppliers.dialogs.newSupplier');
+  });
+  protected readonly editSupplierHeader = computed(() => {
+    if (!Object.keys(this.translationsLoaded()).length) return '';
+    return this.translocoService.translate('suppliers.dialogs.editSupplier');
+  });
+  protected readonly deleteSupplierHeader = computed(() => {
+    if (!Object.keys(this.translationsLoaded()).length) return '';
+    return this.translocoService.translate('suppliers.dialogs.deleteSupplier');
+  });
+  protected readonly screeningDialogHeader = computed(() => {
+    if (!Object.keys(this.translationsLoaded()).length) return '';
+    const s = this.screeningSupplier();
+    return s
+      ? this.translocoService.translate('suppliers.screening.dialogHeader', { name: s.legalName })
+      : '';
+  });
+  protected readonly pageReportTemplate = computed(() => {
+    if (!Object.keys(this.translationsLoaded()).length) return '';
+    return this.translocoService.translate('suppliers.pageReport');
+  });
 
   protected readonly hasActiveFilters = computed(() => {
     const v = this.filterValues();
@@ -154,18 +199,19 @@ export class SuppliersListComponent {
   protected readonly activeSupplier = signal<SupplierResponse | null>(null);
 
   protected readonly rowMenuItems = computed<MenuItem[]>(() => {
+    if (!Object.keys(this.translationsLoaded()).length) return [];
     const s = this.activeSupplier();
     if (!s) return [];
     return [
       {
-        label: 'View details',
+        label: this.translocoService.translate('suppliers.menu.viewDetails'),
         icon: 'pi pi-eye',
         command: () => {
           if (s) this.openDetailsDialog(s);
         },
       },
       {
-        label: 'Edit',
+        label: this.translocoService.translate('suppliers.menu.edit'),
         icon: 'pi pi-pencil',
         command: () => {
           if (s) this.openEditDialog(s);
@@ -173,7 +219,7 @@ export class SuppliersListComponent {
       },
       { separator: true },
       {
-        label: 'Run screening',
+        label: this.translocoService.translate('suppliers.menu.runScreening'),
         icon: 'pi pi-shield',
         command: () => {
           if (s) this.openScreeningDialog(s);
@@ -181,7 +227,7 @@ export class SuppliersListComponent {
       },
       { separator: true },
       {
-        label: 'Delete',
+        label: this.translocoService.translate('suppliers.menu.delete'),
         icon: 'pi pi-trash',
         styleClass: 'text-red-600',
         command: () => {
@@ -322,12 +368,22 @@ export class SuppliersListComponent {
 
   protected statusLabel(status: SupplierStatus): string {
     const map: Record<SupplierStatus, string> = {
-      Approved: 'Approved',
-      Pending: 'Pending',
-      Rejected: 'Rejected',
-      UnderReview: 'Under Review',
+      Approved: this.translocoService.translate('suppliers.details.status.approved'),
+      Pending: this.translocoService.translate('suppliers.details.status.pending'),
+      Rejected: this.translocoService.translate('suppliers.details.status.rejected'),
+      UnderReview: this.translocoService.translate('suppliers.details.status.underReview'),
     };
     return map[status];
+  }
+
+  protected riskLabel(risk: RiskLevel): string {
+    const map: Record<RiskLevel, string> = {
+      None: this.translocoService.translate('suppliers.riskLevel.none'),
+      Low: this.translocoService.translate('suppliers.riskLevel.low'),
+      Medium: this.translocoService.translate('suppliers.riskLevel.medium'),
+      High: this.translocoService.translate('suppliers.riskLevel.high'),
+    };
+    return map[risk];
   }
 
   protected riskSeverity(risk: RiskLevel): 'success' | 'warn' | 'danger' | 'secondary' | 'info' {

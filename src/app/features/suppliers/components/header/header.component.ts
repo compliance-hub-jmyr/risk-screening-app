@@ -2,7 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
 import { TooltipModule } from 'primeng/tooltip';
+import { ButtonModule } from 'primeng/button';
+import { TranslocoModule } from '@jsverse/transloco';
 import { AuthService } from '@/app/features/auth/services';
+import { LanguageService } from '@/app/core';
 
 interface NavItem {
   label: string;
@@ -13,11 +16,19 @@ interface NavItem {
 @Component({
   selector: 'app-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, AvatarModule, TooltipModule],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    AvatarModule,
+    TooltipModule,
+    ButtonModule,
+    TranslocoModule,
+  ],
   templateUrl: './header.component.html',
 })
 export class HeaderComponent {
   private readonly authService = inject(AuthService);
+  protected readonly languageService = inject(LanguageService);
 
   protected readonly user = this.authService.currentUser;
   protected readonly mobileMenuOpen = signal(false);
@@ -49,5 +60,13 @@ export class HeaderComponent {
 
   protected onSignOut(): void {
     this.authService.signOut();
+  }
+
+  protected onToggleLanguage(): void {
+    this.languageService.toggleLanguage();
+  }
+
+  protected getCurrentLanguage(): string {
+    return this.languageService.getCurrentLanguage();
   }
 }
