@@ -158,18 +158,12 @@
         <dt class="text-xs font-medium text-surface-500">Created</dt>
         <dd class="mt-0.5 text-sm text-surface-800">
           {{ supplier().createdAt | date: 'MMM d, y · h:mm a' }}
-          @if (supplier().createdBy) {
-            <span class="ml-1 text-xs text-surface-400">by {{ supplier().createdBy }}</span>
-          }
         </dd>
       </div>
       <div>
         <dt class="text-xs font-medium text-surface-500">Last updated</dt>
         <dd class="mt-0.5 text-sm text-surface-800">
           {{ supplier().updatedAt | date: 'MMM d, y · h:mm a' }}
-          @if (supplier().updatedBy) {
-            <span class="ml-1 text-xs text-surface-400">by {{ supplier().updatedBy }}</span>
-          }
         </dd>
       </div>
     </dl>
