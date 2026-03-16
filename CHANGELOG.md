@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-03-16
+
+### Added
+
+#### Internationalization — EN/ES (`feature/ts-core-001-i18n-transloco`)
+
+- Integrated **Transloco** (`@jsverse/transloco`) as the i18n framework; translation files live in `public/assets/i18n/`.
+- Full **English** (`en.json`) and **Spanish** (`es.json`) translations covering:
+  - Authentication: form labels, validation errors, toast messages, server error codes.
+  - Suppliers module: list headers, filter panel, empty states, row actions menu, form fields and validation errors, dialog titles, toast notifications, delete confirmation copy.
+  - Screening dialog: header, source selector, result tables.
+  - Global HTTP errors (`errors.*`): session expired, no permission, rate limit, server error, no connection, unexpected error.
+- `LanguageService` (`core/services/`) — handles language switching, **localStorage persistence** (`app_language` key), and **browser language auto-detection** (`navigator.language`) with fallback to English.
+- Language toggle button in `HeaderComponent` and `LoginComponent`.
+- Scoped translation support for the `auth` feature (`public/assets/i18n/en/auth.json`, `es/auth.json`).
+
+---
+
 ## [1.0.1] - 2026-03-16
 
 ### Fixed
@@ -107,4 +125,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.1.0]: https://github.com/compliance-hub-jmyr/risk-screening-app/releases/tag/v1.1.0
+[1.0.1]: https://github.com/compliance-hub-jmyr/risk-screening-app/releases/tag/v1.0.1
 [1.0.0]: https://github.com/compliance-hub-jmyr/risk-screening-app/releases/tag/v1.0.0
