@@ -361,6 +361,26 @@
     [resizable]="false"
     [style]="{ width: '70rem', maxWidth: '96vw' }"
   >
-    <app-screening-dialog (closed)="closeScreeningDialog()" [supplier]="screeningSupplier()!"/>
+    <app-screening-dialog (closed)="closeScreeningDialog()" [supplier]="screeningSupplier()!" />
+  </p-dialog>
+}
+
+<!-- Delete supplier dialog -->
+@if (deletingSupplier()) {
+  <p-dialog
+    (onHide)="closeDeleteDialog()"
+    [(visible)]="deleteDialogVisible"
+    [closable]="true"
+    [draggable]="false"
+    [modal]="true"
+    [resizable]="false"
+    [style]="{ width: '32rem', maxWidth: '95vw' }"
+    header="Delete supplier"
+  >
+    <app-delete-confirm-dialog
+      (cancelled)="closeDeleteDialog()"
+      (deleted)="onSupplierDeleted()"
+      [supplier]="deletingSupplier()!"
+    />
   </p-dialog>
 }
