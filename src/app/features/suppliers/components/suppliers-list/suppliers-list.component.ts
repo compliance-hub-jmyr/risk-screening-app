@@ -21,8 +21,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { Menu, MenuModule } from 'primeng/menu';
 import { DialogModule } from 'primeng/dialog';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService, MenuItem } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 
 import { SupplierService } from '../../services';
 import {
@@ -37,6 +36,8 @@ import { PageMetadata } from '@/app/shared/models/api';
 import { COUNTRIES, CountryOption } from '@/app/shared/data/countries.data';
 import { SupplierFormComponent } from '../supplier-form/supplier-form.component';
 import { ScreeningDialogComponent } from '@/app/features/screening/components/screening-dialog/screening-dialog.component';
+import { DeleteConfirmDialogComponent } from '../delete-confirm-dialog/delete-confirm-dialog.component';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
 
 interface SelectOption<T extends string> {
   label: string;
@@ -63,6 +64,7 @@ interface SelectOption<T extends string> {
     ConfirmDialogModule,
     SupplierFormComponent,
     ScreeningDialogComponent,
+    DeleteConfirmDialogComponent
   ],
   templateUrl: './suppliers-list.component.html',
   host: { class: 'flex flex-1 flex-col min-h-0' },
@@ -183,7 +185,7 @@ export class SuppliersListComponent {
         icon: 'pi pi-trash',
         styleClass: 'text-red-600',
         command: () => {
-          // TODO: Implement delete supplier logic
+          if (s) this.openDeleteDialog(s);
         },
       },
     ];
@@ -234,6 +236,27 @@ export class SuppliersListComponent {
   protected closeScreeningDialog(): void {
     this.screeningDialogVisible.set(false);
     this.screeningSupplier.set(null);
+  }
+
+  // Delete dialog
+  protected readonly deleteDialogVisible = signal(false);
+  protected readonly deletingSupplier = signal<SupplierResponse | null>(null);
+
+  protected openDeleteDialog(supplier: SupplierResponse): void {
+    this.deletingSupplier.set(supplier);
+    this.deleteDialogVisible.set(true);
+  }
+
+  protected onSupplierDeleted(): void {
+    this.deleteDialogVisible.set(false);
+    this.deletingSupplier.set(null);
+    this.currentPage.set(0);
+    this.load();
+  }
+
+  protected closeDeleteDialog(): void {
+    this.deleteDialogVisible.set(false);
+    this.deletingSupplier.set(null);
   }
 
   constructor() {
