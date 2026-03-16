@@ -14,6 +14,7 @@
 - [Architecture](#architecture)
 - [Repository Structure](#repository-structure)
 - [Tech Stack](#tech-stack)
+- [Internationalization (i18n)](#internationalization-i18n)
 - [Architecture Decision Records (ADRs)](#architecture-decision-records-adrs)
 
 ---
@@ -76,6 +77,21 @@ risk-screening-app/
 | Forms            | Angular Reactive Forms | —       |
 | State Management | Angular Signals        | —       |
 | HTTP             | Angular HttpClient     | —       |
+| i18n             | Transloco              | 8.2.x   |
+
+---
+
+## Internationalization (i18n)
+
+The app supports **English** and **Spanish** via [Transloco](https://jsverse.github.io/transloco/).
+
+| Feature             | Detail                                                              |
+|---------------------|---------------------------------------------------------------------|
+| Translation files   | `public/assets/i18n/en.json`, `es.json`                             |
+| Scoped translations | `public/assets/i18n/en/auth.json`, `es/auth.json`                   |
+| Language toggle     | Button in header (authenticated) and login page                     |
+| Persistence         | Selected language saved to `localStorage` (`app_language`)          |
+| Auto-detection      | Falls back to `navigator.language` on first visit; defaults to `en` |
 
 ---
 
